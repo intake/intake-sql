@@ -1,5 +1,5 @@
 language: generic
-# Workaround for Travis-CI bug: https://github.com/travis-ci/travis-ci/issues/6972
+# Workaround for Travis-CI bug (part 1): https://github.com/travis-ci/travis-ci/issues/6972
 sudo: required
 os:
   - linux
@@ -15,6 +15,11 @@ env:
   - CONDA_PY=36
   global:
     secure: KZbjTZeluoWVb6piOBkXXc7EGWzGgi6P3emP4Vg4pNUNPLveY49pQF7vKIqiW7HQJgDpdbYFELJKTOtQAKWFNgWduvcISRvp0MMq4VPwRBimY0akXMYYqMi0KlnVGJJhgiviIXKYmuO71kMElQ6SKu9zxOg3C1tRBhOlLbDVnCTmmBAPSVHYhhYNFUSN8zgSneXeWuLcQ1XVt8eLj9GbMUH6hh0K7NsbUDKK+jpiBpa/phOkndRUifhRIuN1Fd/sQ4Pi4/N8Y5o7nY58AHMPzE3S2LY8ze0qMPNe527cDj2efOx0QvRIROKGveKu9MV5tyzUsto6/XF34GHV22AwRjcVN0mMoVrg5XsuLiNui3JBQST1SgTAr6z221QIz8IZATnFkMSlax1PD0Lu1XOcE1o4g8whGTqw0v5ltszu/Ym0rFu179+Cs3lC8WLBxE/CbqonZEfrYP75UwIQ54N3kJYBH7EHLxvjWktibbJAp/wWD7vCknaw9x3y8W5e6U9qXOA7a13pPASGNIbnbnkfAQ1mkDY0631jukVLbXnGZcNwmuOwdbD0Bry+uQHHFbwApfHoF/kJ3jkT7F4yTvvwhn4qzx7MEDe+go4kj0b+HBD7xi7yt52eRCY+c71L7dhw6CggQ8anCKof+pBN97sG0EJo5Q9KBYzIss7MsKsSXDg=
+# Workaround for Travis-CI bug (part 2): https://github.com/travis-ci/travis-ci/issues/6972
+before_script:
+  - |
+    echo "Stopping Travis-CI's PostgreSQL service."
+    sudo service postgresql stop
 install:
 - |
   echo "Installing a fresh version of Miniconda."
