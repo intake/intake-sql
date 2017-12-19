@@ -21,12 +21,14 @@ requirements:
     - sqlalchemy
 
 test:
+  source_files:
+    - tests
   requires:
     - pytest
     - pytest-cov
     - coverage
   commands:
-    - py.test --cov=.
+    - py.test --verbose --cov=intake_postgres tests
 
 about:
   home: https://github.com/ContinuumIO/intake-postgres

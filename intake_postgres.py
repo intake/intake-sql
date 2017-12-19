@@ -41,7 +41,6 @@ class PostgresSource(base.DataSource):
         super(PostgresSource, self).__init__(container='dataframe', metadata=metadata)
 
     def _get_dataframe(self):
-        from sqlalchemy import create_engine
         if self._dataframe is None:
             self._dataframe = dd.read_sql_table(self._sql_expr, self._uri, self._index_col, **self._pg_kwargs)
 

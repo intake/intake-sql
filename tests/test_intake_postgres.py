@@ -2,10 +2,9 @@ import os
 import pickle
 
 import pytest
-import numpy as np
 import pandas as pd
 
-import test_intake_postgres as postgres
+import intake_postgres as postgres
 from .util import verify_plugin_interface, verify_datasource_interface
 
 
@@ -38,9 +37,11 @@ def engine():
         if index_col is None:
             df.index.name = 'index'
         df.to_sql(table_name, engine)
-    yield engine
 
-    stop_postgres()
+    try:
+        yield engine
+    finally:
+        stop_postgres()
 
 
 def test_postgres_plugin():

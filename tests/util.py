@@ -1,15 +1,16 @@
-import os
 import shlex
 import subprocess
 
 
 def verify_plugin_interface(plugin):
+    """Assert types of plugin attributes."""
     assert isinstance(plugin.version, str)
     assert isinstance(plugin.container, str)
     assert isinstance(plugin.partition_access, bool)
 
 
 def verify_datasource_interface(source):
+    """Assert presence of datasource attributes."""
     for attr in ['container', 'description', 'datashape', 'dtype', 'shape',
                  'npartitions', 'metadata']:
         assert hasattr(source, attr)
@@ -20,6 +21,10 @@ def verify_datasource_interface(source):
 
 
 def start_postgres():
+    """Bring up a container running PostgreSQL with PostGIS. Pipe the output of
+    the container process to stdout, until the database is ready to accept
+    connections. This container may be stopped with ``stop_postgres()``.
+    """
     print('Starting PostgreSQL server...')
 
     cmd = shlex.split('docker run --name postgres-db --publish 5432:5432 mdillon/postgis:9.6-alpine')
@@ -32,7 +37,8 @@ def start_postgres():
     while True:
         output_line = proc.stdout.readline()
         print(output_line.rstrip())
-        if proc.poll() is not None: # If the process exited
+        # If the process exited
+        if proc.poll() is not None:
             raise Exception('PostgreSQL server failed to start up properly.')
         if 'PostgreSQL init process complete; ready for start up' in output_line:
             pg_init = True
@@ -41,6 +47,9 @@ def start_postgres():
 
 
 def stop_postgres(let_fail=False):
+    """Attempt to shut down the container started by ``start_postgres()``. Raise
+    an exception if this operation fails, unless ``let_fail`` evaluates to True.
+    """
     try:
         print('Stopping PostgreSQL server...')
         subprocess.check_call('docker ps -q --filter "name=postgres-db" | xargs docker rm -vf', shell=True)

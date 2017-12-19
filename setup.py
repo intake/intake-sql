@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
 import versioneer
 
 
@@ -16,11 +16,9 @@ setup(
     maintainer_email='sseibert@anaconda.com',
     license='BSD',
     py_modules=['intake_postgres'],
-    # packages=['intake_postgres'],
     package_data={'': ['*.csv', '*.yml', '*.html']},
     include_package_data=True,
     install_requires=requires,
-    packages=find_packages(),
     long_description=open('README.rst').read(),
     zip_safe=False,
 )
