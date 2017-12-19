@@ -1,3 +1,4 @@
+import os
 import shlex
 import subprocess
 
@@ -25,6 +26,10 @@ def start_postgres():
     the container process to stdout, until the database is ready to accept
     connections. This container may be stopped with ``stop_postgres()``.
     """
+    # Travis-CI manages PostgreSQL as a service
+    if 'TRAVIS_CI' in os.environ:
+        return
+
     print('Starting PostgreSQL server...')
 
     cmd = shlex.split('docker run --name postgres-db --publish 5432:5432 mdillon/postgis:9.6-alpine')
@@ -50,6 +55,10 @@ def stop_postgres(let_fail=False):
     """Attempt to shut down the container started by ``start_postgres()``. Raise
     an exception if this operation fails, unless ``let_fail`` evaluates to True.
     """
+    # Travis-CI manages PostgreSQL as a service
+    if 'TRAVIS_CI' in os.environ:
+        return
+
     try:
         print('Stopping PostgreSQL server...')
         subprocess.check_call('docker ps -q --filter "name=postgres-db" | xargs docker rm -vf', shell=True)
