@@ -17,7 +17,11 @@ env:
 before_script:
   - |
     echo "Stopping Travis-CI's PostgreSQL service."
-    sudo service postgresql stop
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+        sudo service postgresql stop
+    else
+        sudo brew services stop postgresql
+    fi
 install:
 - |
   echo "Installing a fresh version of Miniconda."
