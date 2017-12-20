@@ -5,9 +5,7 @@ os:
   - linux
   - osx
 services:
-  - postgresql
-addons:
-  postgresql: "9.4"
+  - docker
 env:
   matrix:
   - CONDA_PY=27
