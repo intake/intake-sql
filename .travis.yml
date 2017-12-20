@@ -34,7 +34,8 @@ install:
   source $HOME/miniconda3/bin/activate root
   conda install -y conda-build anaconda-client
 script:
-- if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+- |
+  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" ./conda
   else
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
