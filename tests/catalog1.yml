@@ -17,7 +17,6 @@ sources:
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample2_1'
-      index_col: index
 
   sample2_2:
     driver: postgres
