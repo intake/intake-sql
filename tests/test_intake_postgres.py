@@ -173,3 +173,25 @@ def test_catalog(engine, table_name, _1):
     assert expected_df.equals(df)
 
     pgsrc.close()
+
+
+def test_catalog_join(engine):
+    catalog_fpath = os.path.join(TEST_DATA_DIR, 'catalog1.yml')
+
+    catalog = Catalog(catalog_fpath)
+    ds_name = 'sample2'
+    src = catalog[ds_name]
+    pgsrc = src.get()
+
+    assert src.describe()['container'] == 'dataframe'
+    assert src.describe_open()['plugin'] == 'postgres'
+    assert src.describe_open()['args']['sql_expr'][:6] in ('select', 'SELECT')
+
+    metadata = pgsrc.discover()
+    assert metadata['npartitions'] == 1
+
+    expected_df = pd.read_sql_query(pgsrc._sql_expr, engine)
+    df = pgsrc.read()
+    assert expected_df.equals(df)
+
+    pgsrc.close()

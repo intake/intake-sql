@@ -29,5 +29,8 @@ sources:
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
-        select * from sample2_1 outer join sample2_2
-        on sample2_1.name = sample2_2.name
+        select coalesce(a.name, b.name) as name,
+               coalesce(a.score, b.score) as score,
+               coalesce(a.rank, b.rank) as rank
+        from sample2_1 a full outer join sample2_2 b
+        on a.name = b.name
