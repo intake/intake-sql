@@ -1,0 +1,6 @@
+recursive-include . *.html
+recursive-include . *.csv
+recursive-include . *.yml
+
+include ./versioneer.py
+include ./_version.py

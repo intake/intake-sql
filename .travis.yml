@@ -1,0 +1,49 @@
+language: generic
+# Workaround for Travis-CI bug #1 (part 1): https://github.com/travis-ci/travis-ci/issues/6972
+sudo: required
+os:
+  - linux
+  - osx
+services:
+  - docker
+env:
+  matrix:
+  - CONDA_PY=27
+  - CONDA_PY=35
+  - CONDA_PY=36
+  global:
+    secure: KZbjTZeluoWVb6piOBkXXc7EGWzGgi6P3emP4Vg4pNUNPLveY49pQF7vKIqiW7HQJgDpdbYFELJKTOtQAKWFNgWduvcISRvp0MMq4VPwRBimY0akXMYYqMi0KlnVGJJhgiviIXKYmuO71kMElQ6SKu9zxOg3C1tRBhOlLbDVnCTmmBAPSVHYhhYNFUSN8zgSneXeWuLcQ1XVt8eLj9GbMUH6hh0K7NsbUDKK+jpiBpa/phOkndRUifhRIuN1Fd/sQ4Pi4/N8Y5o7nY58AHMPzE3S2LY8ze0qMPNe527cDj2efOx0QvRIROKGveKu9MV5tyzUsto6/XF34GHV22AwRjcVN0mMoVrg5XsuLiNui3JBQST1SgTAr6z221QIz8IZATnFkMSlax1PD0Lu1XOcE1o4g8whGTqw0v5ltszu/Ym0rFu179+Cs3lC8WLBxE/CbqonZEfrYP75UwIQ54N3kJYBH7EHLxvjWktibbJAp/wWD7vCknaw9x3y8W5e6U9qXOA7a13pPASGNIbnbnkfAQ1mkDY0631jukVLbXnGZcNwmuOwdbD0Bry+uQHHFbwApfHoF/kJ3jkT7F4yTvvwhn4qzx7MEDe+go4kj0b+HBD7xi7yt52eRCY+c71L7dhw6CggQ8anCKof+pBN97sG0EJo5Q9KBYzIss7MsKsSXDg=
+# Workaround for Travis-CI bug #1 (part 2): https://github.com/travis-ci/travis-ci/issues/6972
+before_script:
+  - |
+    echo "Stopping Travis-CI's PostgreSQL service."
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+        sudo service postgresql stop
+    # else
+    #     sudo brew services stop postgresql
+    fi
+install:
+- |
+  echo "Installing a fresh version of Miniconda."
+  MINICONDA_URL="https://repo.continuum.io/miniconda"
+  MINICONDA_FILE="Miniconda3-latest-$(case $TRAVIS_OS_NAME in (linux) echo Linux;; (osx) echo MacOSX;;esac)-x86_64.sh"
+  curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
+  bash $MINICONDA_FILE -b
+- |
+  echo "Configuring conda."
+  source $HOME/miniconda3/bin/activate root
+  conda install -y conda-build anaconda-client
+script:
+- |
+  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" ./conda
+  else
+      # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" --no-test ./conda
+  fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
+  upload `conda build -c intake/label/main --output ./conda`; fi
+notifications:
+  email: false
+  on_success: change
+  on_failure: always

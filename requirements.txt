@@ -1,0 +1,5 @@
+intake
+pyscopg2
+sqlalchemy
+postgresql
+dask

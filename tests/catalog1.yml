@@ -1,0 +1,36 @@
+plugins:
+  source:
+    - module: intake_postgres
+
+sources:
+  # In this case, each "source" is the name of a dataset; for convenience, it
+  # shares the name of the table where the data resides - but this need not be
+  # the case (and will probably not be the case very often).
+  sample1:
+    driver: postgres
+    args:
+      uri: 'postgresql://postgres@localhost:5432/postgres'
+      sql_expr: 'select * from sample1'
+
+  sample2_1:
+    driver: postgres
+    args:
+      uri: 'postgresql://postgres@localhost:5432/postgres'
+      sql_expr: 'select * from sample2_1'
+
+  sample2_2:
+    driver: postgres
+    args:
+      uri: 'postgresql://postgres@localhost:5432/postgres'
+      sql_expr: 'select * from sample2_2'
+
+  sample2:
+    driver: postgres
+    args:
+      uri: 'postgresql://postgres@localhost:5432/postgres'
+      sql_expr: |
+        select coalesce(a.name, b.name) as name,
+               coalesce(a.score, b.score) as score,
+               coalesce(a.rank, b.rank) as rank
+        from sample2_1 a full outer join sample2_2 b
+        on a.name = b.name
