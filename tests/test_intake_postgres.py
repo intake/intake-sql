@@ -61,7 +61,7 @@ def test_discover(engine, table_name, csv_fpath):
     source = p.open(DB_URI, 'select * from '+table_name)
     info = source.discover()
     assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
-    assert info['shape'] == (expected_df.shape[0],)
+    assert info['shape'] == (None,)
     assert info['npartitions'] == 1
 
 
