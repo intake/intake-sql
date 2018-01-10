@@ -35,13 +35,17 @@ def start_postgres():
                             stderr=subprocess.STDOUT,
                             universal_newlines=True)
 
+    # The database may have been restarted in the container, so track whether
+    # initialization happened or not.
     pg_init = False
     while True:
         output_line = proc.stdout.readline()
         print(output_line.rstrip())
-        # If the process exited
+        # If the process exited, raise exception.
         if proc.poll() is not None:
             raise Exception('PostgreSQL server failed to start up properly.')
+        # Detect when initialization has happened, so we can stop waiting when
+        # the database is accepting connections.
         if ('PostgreSQL init process complete; '
                 'ready for start up') in output_line:
             pg_init = True

@@ -8,7 +8,7 @@ class Plugin(base.Plugin):
         super(Plugin, self).__init__(name='postgres',
                                      version='0.1',
                                      container='dataframe',
-                                     partition_access=True)
+                                     partition_access=False)
 
     def open(self, uri, sql_expr, **kwargs):
         """
@@ -47,16 +47,21 @@ class PostgresSource(base.DataSource):
     def _get_schema(self):
         if self._dataframe is None:
             engine = sa.create_engine(self._uri)
+            # This approach is not optimal; LIMIT is know to confuse the query
+            # planner sometimes. If there is a faster approach to gleaning
+            # dtypes from arbitrary SQL queries, we should use it instead.
             first_row = pd.read_sql_query(('({}) '
                                            'limit 1').format(self._sql_expr),
                                           engine,
                                           **self._pg_kwargs)
+            dtype = list(zip(first_row.dtypes.index, first_row.dtypes))
+            shape = (None, len(first_row.dtypes.index))
         else:
-            first_row = self._dataframe.iloc[0]
+            dtype = self._dataframe.dtype
+            shape = self._dataframe.shape
         return base.Schema(datashape=None,
-                           dtype=list(zip(first_row.dtypes.index,
-                                          first_row.dtypes)),
-                           shape=(None, len(first_row.dtypes.index)),
+                           dtype=dtype,
+                           shape=shape,
                            npartitions=1,
                            extra_metadata={})
 

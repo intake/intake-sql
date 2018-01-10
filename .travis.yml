@@ -32,10 +32,9 @@ install:
 - |
   echo "Configuring conda."
   source $HOME/miniconda3/bin/activate root
-  conda install -y conda-build anaconda-client
+  conda install -y conda-build anaconda-client flake8
 script:
 - |
-  conda install -y flake8
   flake8 .
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" ./conda
