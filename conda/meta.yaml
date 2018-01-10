@@ -1,5 +1,5 @@
 package:
-   name: intake_postgres
+   name: intake-postgres
    version: {{ GIT_DESCRIBE_TAG }}
 
 source:

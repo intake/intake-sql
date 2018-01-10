@@ -29,7 +29,7 @@ def start_postgres():
     print('Starting PostgreSQL server...')
 
     # More options here: https://github.com/appropriate/docker-postgis
-    cmd = shlex.split('docker run --name postgres-db --publish 5432:5432 mdillon/postgis:9.4-alpine')
+    cmd = shlex.split('docker run --rm --name postgres-db --publish 5432:5432 mdillon/postgis:9.4-alpine')
     proc = subprocess.Popen(cmd,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,

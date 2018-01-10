@@ -4,6 +4,7 @@ import pandas as pd
 import sqlalchemy as sa
 
 
+
 class Plugin(base.Plugin):
     def __init__(self):
         super(Plugin, self).__init__(name='postgres', version='0.1', container='dataframe', partition_access=True)
@@ -37,15 +38,20 @@ class PostgresSource(base.DataSource):
     def _get_schema(self):
         if self._dataframe is None:
             engine = sa.create_engine(self._uri)
-            self._dataframe = pd.read_sql_query(self._sql_expr, engine)
-            dtypes = self._dataframe.dtypes
+            first_row = pd.read_sql_query('({}) limit 1'.format(self._sql_expr),
+                                          engine)
+        else:
+            first_row = self._dataframe.iloc[0]
         return base.Schema(datashape=None,
-                           dtype=list(zip(dtypes.index, dtypes)),
-                           shape=(None,),
+                           dtype=list(zip(first_row.dtypes.index, first_row.dtypes)),
+                           shape=(None, len(first_row.dtypes.index)),
                            npartitions=1,
                            extra_metadata={})
 
     def _get_partition(self, _):
+        if self._dataframe is None:
+            engine = sa.create_engine(self._uri)
+            self._dataframe = pd.read_sql_query(self._sql_expr, engine)
         return self._dataframe
 
     def _close(self):
