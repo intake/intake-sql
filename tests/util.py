@@ -28,7 +28,7 @@ def start_postgres():
     print('Starting PostgreSQL server...')
 
     # More options here: https://github.com/appropriate/docker-postgis
-    cmd = shlex.split('docker run --rm --name postgres-db --publish 5432:5432 '
+    cmd = shlex.split('docker run --rm --name intake-postgres --publish 5432:5432 '
                       'mdillon/postgis:9.4-alpine')
     proc = subprocess.Popen(cmd,
                             stdout=subprocess.PIPE,
@@ -61,7 +61,7 @@ def stop_postgres(let_fail=False):
     """
     try:
         print('Stopping PostgreSQL server...')
-        subprocess.check_call('docker ps -q --filter "name=postgres-db" | '
+        subprocess.check_call('docker ps -q --filter "name=intake-postgres" | '
                               'xargs docker rm -vf', shell=True)
     except subprocess.CalledProcessError:
         if not let_fail:

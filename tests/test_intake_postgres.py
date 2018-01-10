@@ -74,6 +74,30 @@ def test_read(engine, table_name, csv_fpath):
     assert expected_df.equals(df)
 
 
+@pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
+def test_discover_after_read(engine, table_name, csv_fpath):
+    """Assert that after reading the dataframe, discover() shows more accurate
+    information.
+    """
+    expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
+    p = postgres.Plugin()
+    source = p.open(DB_URI, 'select * from '+table_name)
+    info = source.discover()
+    assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
+    assert info['shape'] == (None, 3)
+    assert info['npartitions'] == 1
+
+    df = source.read()
+    assert expected_df.equals(df)
+
+    info = source.discover()
+    assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
+    assert info['shape'] == (4, 3)
+    assert info['npartitions'] == 1
+
+    assert expected_df.equals(df)
+
+
 @pytest.mark.skip('Not implemented yet')
 @pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
 def test_read_chunked(engine, table_name, csv_fpath):

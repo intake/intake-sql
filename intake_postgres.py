@@ -57,7 +57,7 @@ class PostgresSource(base.DataSource):
             dtype = list(zip(first_row.dtypes.index, first_row.dtypes))
             shape = (None, len(first_row.dtypes.index))
         else:
-            dtype = self._dataframe.dtype
+            dtype = list(zip(self._dataframe.dtypes.index, self._dataframe.dtypes))
             shape = self._dataframe.shape
         return base.Schema(datashape=None,
                            dtype=dtype,
@@ -71,6 +71,8 @@ class PostgresSource(base.DataSource):
             self._dataframe = pd.read_sql_query(self._sql_expr,
                                                 engine,
                                                 **self._pg_kwargs)
+            # The schema should be corrected once the data is read.
+            self._schema = None
         return self._dataframe
 
     def _close(self):
