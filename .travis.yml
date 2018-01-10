@@ -43,7 +43,7 @@ script:
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" --no-test ./conda
   fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
+- if [ -n "$TRAVIS_TAG" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
   upload -u intake --force `conda build -c intake/label/main --output ./conda`; fi
 notifications:
   email: false
