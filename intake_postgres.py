@@ -1,6 +1,5 @@
 from intake.source import base
-import pandas as pd
-import sqlalchemy as sa
+from postgresadapter import PostgresAdapter
 
 
 class Plugin(base.Plugin):
@@ -18,7 +17,8 @@ class Plugin(base.Plugin):
             sql_expr : string or SQLAlchemy Selectable (select or text object):
                 SQL query to be executed.
             kwargs (dict):
-                Additional parameters to pass to ``pandas.from_sql_query()``.
+                Additional parameters to pass as keyword arguments to
+                ``PostgresAdapter`` constructor.
         """
         base_kwargs, source_kwargs = self.separate_base_kwargs(kwargs)
         return PostgresSource(uri=uri,
@@ -46,14 +46,15 @@ class PostgresSource(base.DataSource):
 
     def _get_schema(self):
         if self._dataframe is None:
-            engine = sa.create_engine(self._uri)
             # This approach is not optimal; LIMIT is know to confuse the query
             # planner sometimes. If there is a faster approach to gleaning
             # dtypes from arbitrary SQL queries, we should use it instead.
-            first_row = pd.read_sql_query(('({}) '
-                                           'limit 1').format(self._sql_expr),
-                                          engine,
-                                          **self._pg_kwargs)
+            first_row = PostgresAdapter(
+                self._uri,
+                dataframe=True,
+                query=('({}) limit 1').format(self._sql_expr),
+                **self._pg_kwargs,
+            )._to_dataframe()
             dtype = list(zip(first_row.dtypes.index, first_row.dtypes))
             shape = (None, len(first_row.dtypes.index))
         else:
@@ -67,10 +68,12 @@ class PostgresSource(base.DataSource):
 
     def _get_partition(self, _):
         if self._dataframe is None:
-            engine = sa.create_engine(self._uri)
-            self._dataframe = pd.read_sql_query(self._sql_expr,
-                                                engine,
-                                                **self._pg_kwargs)
+            self._dataframe = PostgresAdapter(
+                self._uri,
+                dataframe=True,
+                query=self._sql_expr,
+                **self._pg_kwargs,
+            )._to_dataframe()
             # The schema should be corrected once the data is read.
             self._schema = None
         return self._dataframe

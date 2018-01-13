@@ -32,7 +32,12 @@ install:
 - |
   echo "Configuring conda."
   source $HOME/miniconda3/bin/activate root
+- |
+  echo "Installing dependencies."
   conda install -y conda-build anaconda-client flake8
+  git clone https://github.com/ContinuumIO/PostgresAdapter.git
+  conda build PostgresAdapter/buildscripts/condarecipe
+  conda install --use-local postgresadapter
 script:
 - |
   flake8 .
