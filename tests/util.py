@@ -24,11 +24,13 @@ def start_postgres():
     """Bring up a container running PostgreSQL with PostGIS. Pipe the output of
     the container process to stdout, until the database is ready to accept
     connections. This container may be stopped with ``stop_postgres()``.
+
+    Returns the local port as a string.
     """
     print('Starting PostgreSQL server...')
 
     # More options here: https://github.com/appropriate/docker-postgis
-    cmd = shlex.split('docker run --rm --name intake-postgres --publish 5432:5432 '
+    cmd = shlex.split('docker run --rm --name intake-postgres --publish 5432 '
                       'mdillon/postgis:9.4-alpine')
     proc = subprocess.Popen(cmd,
                             stdout=subprocess.PIPE,
@@ -52,6 +54,13 @@ def start_postgres():
         elif (pg_init and
               'database system is ready to accept connections' in output_line):
             break
+
+    # Print the local port to which Docker mapped Postgres
+    cmd = shlex.split('docker ps --filter "name=intake-postgres" --format '
+                      '"{{ .Ports }}"')
+    port_map = subprocess.check_output(cmd, universal_newlines=True).strip()
+    port = port_map.split('->', 1)[0].split(':', 1)[1]
+    return port
 
 
 def stop_postgres(let_fail=False):
