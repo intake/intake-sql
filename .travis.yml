@@ -42,10 +42,10 @@ script:
 - |
   flake8 .
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" ./conda
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local ./conda
   else
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" --no-test ./conda
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local --no-test ./conda
   fi
 - if [ -n "$TRAVIS_TAG" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
   upload -u intake --force `conda build -c intake/label/main --output ./conda`; fi
