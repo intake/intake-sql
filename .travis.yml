@@ -18,7 +18,7 @@ before_script:
   - |
     echo "Stopping Travis-CI's PostgreSQL service."
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-        sudo service postgresql stop
+        sudo /etc/init.d/postgresql stop || sudo service postgresql stop
     # else
     #     sudo brew services stop postgresql
     fi
