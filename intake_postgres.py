@@ -49,10 +49,12 @@ class PostgresSource(base.DataSource):
             # This approach is not optimal; LIMIT is know to confuse the query
             # planner sometimes. If there is a faster approach to gleaning
             # dtypes from arbitrary SQL queries, we should use it instead.
-            all_kws = dict(dataframe=True,
-                           query=('({}) limit 1').format(self._sql_expr))
-            all_kws.update(self._pg_kwargs)
-            first_row = PostgresAdapter(self._uri, **all_kws)._to_dataframe()
+            first_row = PostgresAdapter(
+                self._uri,
+                dataframe=True,
+                query=('({}) limit 1').format(self._sql_expr),
+                **self._pg_kwargs
+            )._to_dataframe()
             dtype = list(zip(first_row.dtypes.index, first_row.dtypes))
             shape = (None, len(first_row.dtypes.index))
         else:
@@ -66,10 +68,12 @@ class PostgresSource(base.DataSource):
 
     def _get_partition(self, _):
         if self._dataframe is None:
-            all_kws = dict(dataframe=True, query=self._sql_expr)
-            all_kws.update(self._pg_kwargs)
-            self._dataframe = PostgresAdapter(self._uri,
-                                              **all_kws)._to_dataframe()
+            self._dataframe = PostgresAdapter(
+                self._uri,
+                dataframe=True,
+                query=self._sql_expr,
+                **self._pg_kwargs
+            )._to_dataframe()
             # The schema should be corrected once the data is read.
             self._schema = None
         return self._dataframe
