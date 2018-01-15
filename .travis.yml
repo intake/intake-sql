@@ -27,16 +27,16 @@ install:
   echo "Installing dependencies."
   conda install -y conda-build anaconda-client flake8
   git clone https://github.com/ContinuumIO/PostgresAdapter.git
-  conda build --python "${CONDA_PY:0:1}:${CONDA_PY:1:2}" PostgresAdapter/buildscripts/condarecipe
+  conda build --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" PostgresAdapter/buildscripts/condarecipe
   conda install --use-local postgresadapter
 script:
 - |
   flake8 .
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local ./conda
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   else
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local --no-test ./conda
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   fi
 - if [ -n "$TRAVIS_TAG" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
   upload -u intake --force `conda build -c intake/label/main --output ./conda`; fi
