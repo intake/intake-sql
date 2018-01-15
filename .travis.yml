@@ -26,12 +26,12 @@ install:
 - |
   echo "Installing dependencies."
   conda install -y conda-build anaconda-client flake8
+  flake8 .  # Fail fast on syntax errors
   git clone https://github.com/ContinuumIO/PostgresAdapter.git
   conda build --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" PostgresAdapter/buildscripts/condarecipe
   conda install -y --use-local postgresadapter
 script:
 - |
-  flake8 .
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   else
