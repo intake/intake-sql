@@ -6,25 +6,25 @@ sources:
   # In this case, each "source" is the name of a dataset; for convenience, it
   # shares the name of the table where the data resides - but this need not be
   # the case (and will probably not be the case very often).
-  sample1:
+  - name: sample1
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample1'
 
-  sample2_1:
+  - name: sample2_1
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample2_1'
 
-  sample2_2:
+  - name: sample2_2
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample2_2'
 
-  sample2:
+  - name: sample2
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
