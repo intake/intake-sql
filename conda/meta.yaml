@@ -13,12 +13,10 @@ requirements:
   build:
     - python
     - jinja2
-    - postgresql
   run:
-    - intake
     - python
-    - psycopg2
-    - sqlalchemy
+    - intake
+    - postgresadapter
 
 test:
   source_files:
@@ -27,6 +25,9 @@ test:
     - pytest
     - pytest-cov
     - coverage
+    - psycopg2
+    - sqlalchemy
+    - postgresql
   commands:
     - py.test --verbose --cov=intake_postgres tests
 

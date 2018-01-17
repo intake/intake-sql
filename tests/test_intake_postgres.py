@@ -9,7 +9,6 @@ from intake.catalog import Catalog
 from .util import verify_plugin_interface, verify_datasource_interface
 
 
-DB_URI = 'postgresql://postgres@localhost:5432/postgres'
 TEST_DATA_DIR = 'tests'
 TEST_DATA = [
     ('sample1', 'sample1.csv'),
@@ -25,9 +24,10 @@ def engine():
     from .util import start_postgres, stop_postgres
     from sqlalchemy import create_engine
     stop_postgres(let_fail=True)
-    start_postgres()
+    local_port = start_postgres()
 
-    engine = create_engine(DB_URI)
+    uri = 'postgresql://postgres@localhost:{}/postgres'.format(local_port)
+    engine = create_engine(uri)
     for table_name, csv_fpath in TEST_DATA:
         df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
         df.to_sql(table_name, engine, index=False)
@@ -48,7 +48,7 @@ def test_postgres_plugin():
 @pytest.mark.parametrize('table_name,_', TEST_DATA)
 def test_open(engine, table_name, _):
     p = postgres.Plugin()
-    d = p.open(DB_URI, 'select * from '+table_name)
+    d = p.open(str(engine.url), 'select * from '+table_name)
     assert d.container == 'dataframe'
     assert d.description is None
     verify_datasource_interface(d)
@@ -58,7 +58,7 @@ def test_open(engine, table_name, _):
 def test_discover(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
     info = source.discover()
     assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
     assert info['shape'] == (None, 3)
@@ -69,7 +69,7 @@ def test_discover(engine, table_name, csv_fpath):
 def test_read(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
     df = source.read()
     assert expected_df.equals(df)
 
@@ -81,7 +81,7 @@ def test_discover_after_read(engine, table_name, csv_fpath):
     """
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
     info = source.discover()
     assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
     assert info['shape'] == (None, 3)
@@ -104,7 +104,7 @@ def test_read_chunked(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
 
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
 
     parts = list(source.read_chunked())
     df = pd.concat(parts)
@@ -119,7 +119,7 @@ def test_read_partition(engine, table_name, csv_fpath):
     expected_df2 = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
 
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
 
     source.discover()
     assert source.npartitions == 2
@@ -138,7 +138,7 @@ def test_to_dask(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
 
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
 
     dd = source.to_dask()
     df = dd.compute()
@@ -151,7 +151,7 @@ def test_close(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
 
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
 
     source.close()
     # Can reopen after close
@@ -165,7 +165,7 @@ def test_pickle(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
 
     p = postgres.Plugin()
-    source = p.open(DB_URI, 'select * from '+table_name)
+    source = p.open(str(engine.url), 'select * from '+table_name)
 
     pickled_source = pickle.dumps(source)
     source_clone = pickle.loads(pickled_source)
@@ -184,6 +184,7 @@ def test_catalog(engine, table_name, _1):
     ds_name = table_name.rsplit('_idx', 1)[0]
     src = catalog[ds_name]
     pgsrc = src.get()
+    pgsrc._uri = str(engine.url)
 
     assert src.describe()['container'] == 'dataframe'
     assert src.describe_open()['plugin'] == 'postgres'
@@ -206,6 +207,7 @@ def test_catalog_join(engine):
     ds_name = 'sample2'
     src = catalog[ds_name]
     pgsrc = src.get()
+    pgsrc._uri = str(engine.url)
 
     assert src.describe()['container'] == 'dataframe'
     assert src.describe_open()['plugin'] == 'postgres'
