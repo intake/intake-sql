@@ -99,3 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+# Discard output from the examples notebooks
+examples/*.yml
