@@ -1,0 +1,11 @@
+create table triangles (
+       tri2d geometry(TRIANGLE),
+       tri3d geometry(TRIANGLEZ),
+        tri4d geometry(TRIANGLEZM)
+);
+
+insert into triangles (tri2d, tri3d, tri4d) values (
+       ST_GeomFromText('TRIANGLE((0 0,1 1,2 2,0 0))'), 
+       ST_GeomFromText('TRIANGLE((0 0 0,1 1 1,2 2 2,0 0 0))'), 
+       ST_GeomFromText('TRIANGLE((0 0 0 0,1 1 1 1,2 2 2 2,0 0 0 0))')
+);

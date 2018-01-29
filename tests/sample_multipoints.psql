@@ -1,0 +1,11 @@
+create table multipoints (
+       point2d geometry(MULTIPOINT), 
+       point3d geometry(MULTIPOINTZ), 
+       point4d geometry(MULTIPOINTZM)
+);
+
+insert into multipoints (point2d, point3d, point4d) values (
+       ST_GeomFromText('MULTIPOINT(0 1, 2 3)'), 
+       ST_GeomFromText('MULTIPOINT(0 1 2, 3 4 5)'), 
+       ST_GeomFromText('MULTIPOINT(0 1 2 3, 4 5 6 7)')
+);
