@@ -24,6 +24,14 @@ TEST_GIS_DATA = [
     ('multipolygons', 'sample_multipolygons.psql'),
     # ('triangles', 'sample_triangles.psql'),
 ]
+TEST_TEMPLATE_DATA = [
+    'jinja2_env',
+    'jinja2_shell',
+    'jinja2_shell_and_env',
+    'jinja2_params_with_env',
+    'jinja2_params_with_shell',
+    'jinja2_params_with_shell_and_env',
+]
 
 @pytest.fixture(scope='module')
 def engine():
@@ -269,7 +277,7 @@ def test_postgis_data(engine, table_name, _1):
     pgsrc.close()
 
 
-@pytest.mark.parametrize('ds_name', ['jinja2_shell', 'jinja2_env', 'jinja2_shell_and_env'])
+@pytest.mark.parametrize('ds_name', TEST_TEMPLATE_DATA)
 def test_jinja2(engine, ds_name):
     catalog_fpath = os.path.join(TEST_DATA_DIR, 'catalog1.yml')
 
@@ -285,7 +293,7 @@ def test_jinja2(engine, ds_name):
     metadata = pgsrc.discover()
     assert metadata['npartitions'] == 1
 
-    expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, 'sample1.csv'))
+    expected_df = pd.read_sql_query(pgsrc._sql_expr, engine)
     df = pgsrc.read()
     assert expected_df.equals(df)
 
