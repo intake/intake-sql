@@ -28,6 +28,7 @@ test:
     - psycopg2
     - sqlalchemy
     - postgresql
+    - shapely
   commands:
     - py.test --verbose --cov=intake_postgres tests
 

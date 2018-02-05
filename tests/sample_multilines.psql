@@ -1,0 +1,11 @@
+create table multilines (
+       line2d geometry(MULTILINESTRING), 
+       line3d geometry(MULTILINESTRINGZ), 
+       line4d geometry(MULTILINESTRINGZM)
+);
+
+insert into multilines (line2d, line3d, line4d) values (
+       ST_GeomFromText('MULTILINESTRING((0 1, 2 3), (4 5, 6 7))'), 
+       ST_GeomFromText('MULTILINESTRING((0 1 2, 3 4 5), (6 7 8, 9 10 11, 12 13 14))'), 
+       ST_GeomFromText('MULTILINESTRING((0 1 2 3, 4 5 6 7), (8 9 10 11, 12 13 14 15))')
+);

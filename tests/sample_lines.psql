@@ -1,0 +1,17 @@
+create table lines (
+       line2d geometry(LINESTRING), 
+       line3d geometry(LINESTRINGZ), 
+       line4d geometry(LINESTRINGZM)
+);
+
+insert into lines (line2d, line3d, line4d) values (
+       ST_GeomFromText('LINESTRING(0 1, 2 3)'), 
+       ST_GeomFromText('LINESTRING(0 1 2, 3 4 5)'), 
+       ST_GeomFromText('LINESTRING(0 1 2 3, 4 5 6 7)')
+);
+
+insert into lines (line2d, line3d, line4d) values (
+       ST_GeomFromText('LINESTRING(0 1, 2 3, 4 5)'), 
+       ST_GeomFromText('LINESTRING(0 1 2, 3 4 5, 6 7 8)'), 
+       ST_GeomFromText('LINESTRING(0 1 2 3, 4 5 6 7)')
+);

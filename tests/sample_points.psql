@@ -1,0 +1,11 @@
+create table points (
+       point2d geometry(POINT), 
+       point3d geometry(POINTZ), 
+       point4d geometry(POINTZM)
+);
+
+insert into points (point2d, point3d, point4d) values (
+       ST_GeomFromText('POINT(0 1)'), 
+       ST_GeomFromText('POINT(0 1 2)'), 
+       ST_GeomFromText('POINT(0 1 2 3)')
+);

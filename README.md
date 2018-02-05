@@ -19,10 +19,15 @@ conda install -c intake intake-postgres
     git clone https://github.com/ContinuumIO/PostgresAdapter.git
     conda build PostgresAdapter/buildscripts/condarecipe
     conda install --use-local postgresadapter
-    conda install pandas psycopg2 sqlalchemy postgresql postgres
+    conda install pandas psycopg2 sqlalchemy postgresql postgres pytest shapely
     ```
 
 1. Development installation:
     ```
     python setup.py develop --no-deps
+    ```
+
+1. Running tests:
+    ```
+    pytest -v tests
     ```
