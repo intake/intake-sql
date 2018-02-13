@@ -1,18 +1,20 @@
 language: generic
-# Workaround for Travis-CI bug #1 (part 1): https://github.com/travis-ci/travis-ci/issues/6972
 sudo: required
 os:
-  - linux
-  - osx
+- linux
+- osx
 services:
-  - docker
+- docker
+branches:
+  only:
+  - master
 env:
   matrix:
   - CONDA_PY=27
   - CONDA_PY=35
   - CONDA_PY=36
   global:
-    secure: KZbjTZeluoWVb6piOBkXXc7EGWzGgi6P3emP4Vg4pNUNPLveY49pQF7vKIqiW7HQJgDpdbYFELJKTOtQAKWFNgWduvcISRvp0MMq4VPwRBimY0akXMYYqMi0KlnVGJJhgiviIXKYmuO71kMElQ6SKu9zxOg3C1tRBhOlLbDVnCTmmBAPSVHYhhYNFUSN8zgSneXeWuLcQ1XVt8eLj9GbMUH6hh0K7NsbUDKK+jpiBpa/phOkndRUifhRIuN1Fd/sQ4Pi4/N8Y5o7nY58AHMPzE3S2LY8ze0qMPNe527cDj2efOx0QvRIROKGveKu9MV5tyzUsto6/XF34GHV22AwRjcVN0mMoVrg5XsuLiNui3JBQST1SgTAr6z221QIz8IZATnFkMSlax1PD0Lu1XOcE1o4g8whGTqw0v5ltszu/Ym0rFu179+Cs3lC8WLBxE/CbqonZEfrYP75UwIQ54N3kJYBH7EHLxvjWktibbJAp/wWD7vCknaw9x3y8W5e6U9qXOA7a13pPASGNIbnbnkfAQ1mkDY0631jukVLbXnGZcNwmuOwdbD0Bry+uQHHFbwApfHoF/kJ3jkT7F4yTvvwhn4qzx7MEDe+go4kj0b+HBD7xi7yt52eRCY+c71L7dhw6CggQ8anCKof+pBN97sG0EJo5Q9KBYzIss7MsKsSXDg=
+    secure: BTt0VMolkwMYxgPQZpwSFArYJ5GReneJws7s/P5w3RZ89trj2rRtVecUTYUIqg1qCLrltutAs/xfumYQAEgR/Lj8aC2irSm5Qo/xvcVbnozU56QsZeoNMK7vFRbF9HgPRvo8HaYmbI8dn+Av+pJhUMmsxEt+USa8TZPzVruqLhD1x+LooDnCd+TfPMt9bZtr6f3nQRcPzMV+WDyY3KMfyWxM+MvFZULzl1HpnLFJsibReyF8dvjdZwXSzaUno1saoOdY+ie8ZX3JLmki3qnr2mlhgPKySugi606LuysLPx26vDeYYd9HcHEDFB4IclOVAv46vok370SLY3S8Qa0pHcZ1Gkc9mzxTh8uW9MPFPAC7o7Oe0bcoPcKnXoIQQ9ZOvdxrjii0T5g0SG2Gqpg6wQgEP8OIVw2curXOTO/E90QuyfrWLhctRRNM0drokU9TZXzvfKwIPCOiy+C4SCivL42h89IYbB8zYkcZEFWBh3MLzq+9ySymIMeDhqLBczrf5xL/ABpO+NerQNElWDkSTE9zAtBohun7UJLIRX23sBHikbkeVWPKZtsKTDgeoSoK86VoGZFtwmcpp8VIvD4Xt4JsRSazxD0eapd1c5P+47aK2t0G6QO3LW5bMklYGCoz/vF+vHhSSnwe44uhiUXif8EBj4w6tl/NtvhGHdgvuzU=
 install:
 - |
   echo "Installing a fresh version of Miniconda."
@@ -45,8 +47,8 @@ script:
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c local --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   fi
-- if [ -n "$TRAVIS_TAG" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
-  upload -u intake --force `conda build -c intake/label/main --output ./conda`; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
+  upload --force `conda build -c intake/label/main --output ./conda`; fi
 notifications:
   email: false
   on_success: change
