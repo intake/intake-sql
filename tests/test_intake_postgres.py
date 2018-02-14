@@ -2,7 +2,7 @@ import os
 import pickle
 import pytest
 import pandas as pd
-from shapely import wkb, wkt
+from shapely import wkt
 
 import intake_postgres as postgres
 from intake.catalog import Catalog
@@ -32,6 +32,7 @@ TEST_TEMPLATE_DATA = [
     'jinja2_params_with_shell',
     'jinja2_params_with_shell_and_env',
 ]
+
 
 @pytest.fixture(scope='module')
 def engine():
@@ -268,9 +269,12 @@ def test_postgis_data(engine, table_name, _1):
 
     meta = MetaData()
     meta.reflect(bind=engine)
-    col_exprs = ['ST_AsText({0}) as {0}'.format(col.name) for col in meta.tables[table_name].columns]
+    col_exprs = ['ST_AsText({0}) as {0}'.format(col.name)
+                 for col in meta.tables[table_name].columns]
     _query = pgsrc._sql_expr.replace('*', ', '.join(col_exprs))
-    expected_df = pd.read_sql_query(_query, engine).applymap(lambda geom: str(wkt.loads(geom)))
+    expected_df = pd.read_sql_query(_query, engine).applymap(
+        lambda geom: str(wkt.loads(geom))
+    )
     df = pgsrc.read().applymap(lambda geom: str(wkt.loads(geom)))
     assert expected_df.equals(df)
 
