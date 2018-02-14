@@ -103,3 +103,5 @@ ENV/
 
 # Discard output from the examples notebooks
 examples/*.yml
+examples/*.html
+examples/*.csv
