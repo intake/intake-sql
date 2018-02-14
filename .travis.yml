@@ -34,12 +34,12 @@ install:
 script:
 - |
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_TOKEN/intake" --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   else
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
+      conda build -c "https://conda.anaconda.org/t/$ANACONDA_TOKEN/intake" --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_TOKEN}
   upload --force `conda build -c intake/label/main --output ./conda`; else echo "skipping upload"; fi
 notifications:
   email: false
