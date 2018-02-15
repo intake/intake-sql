@@ -1,8 +1,6 @@
 API Reference
 =============
 
-.. autoclass:: intake.source.base.Plugin
+.. autoclass:: intake_postgres.Plugin
 
-.. autoclass:: intake.source.base.DataSource
-
-.. autoclass:: intake.catalog.Catalog
+.. autoclass:: intake_postgres.PostgresSource

@@ -1,35 +1,67 @@
 Quickstart
 ==========
 
-This guide will show you how to get started using Intake-Postgres to read data stored in PostgresSQL. It assumes you have just completed the :ref:`Intake quickstart <intake:quickstart>`.
+This guide will show you how to get started using *Intake-Postgres* to read data stored in *PostgresSQL*. It assumes you have just completed the Intake quickstart.
+
 
 Installation
 ------------
 
-If you are using Anaconda or Miniconda, install Intake and a sample plugin with the following commands::
+If you are using *Anaconda* or *Miniconda*, install *Intake* and a sample plugin with the following commands::
 
     conda install -c intake intake-postgres
 
-Creating Sample Data
---------------------
 
-..
-    Let's begin by creating a sample data set and catalog.  At the command line, run the ``intake example`` command.  This will create an example data catalog and two CSV data files.  These files contains some basic facts about the 50 US states.
+Usage (via *catalog.yml*)
+-------------------------
 
-Loading a Data Source
----------------------
+Usage of *Intake-Postgres* is easiest to illustrate with an example.
+
+In the *catalog.yml* file:
+
+.. code-block:: yaml
+
+   plugins:
+     source:
+       - module: intake_postgres
+   
+     sources:
+       - name: all_users
+         driver: postgres
+         args:
+           uri: 'postgresql://postgres@localhost:5432/postgres'
+           sql_expr: 'select * from users'
 
 
-Reading Data
-------------
+There are two things to note in the above example:
+
+1. `intake_postgres` is included under "plugins".
+   This only needs to be done once for each *catalog.yml* file.
+2. Any `sources` entry which includes the field `driver: postgres` includes some additional fields that are specific to the *Intake-Postgres* plugin.
+   Specifically, we need to provide a `uri` to the database, and a `sql_expr` (SQL query expression).
+
+Intake can then be accessed as normally, and provided that *Intake-Postgres* is installed:
+
+    >>> import intake
+    >>> catalog = intake.Catalog('catalog.yml')
+    >>> ds = catalog.all_users
+    >>> ds.discover()
+    >>> df = ds.read()
+    >>> df.tail()
+
+The code above reads the *catalog.yml* file as normal, calls `discover()` on the *Intake-Postgres* data source, and then reads it into a dataframe for further analysis.
 
 
-Opening a Catalog
------------------
+Usage (via Python library)
+--------------------------
 
-..
-    It is often useful to move the descriptions of data sources out of your code and into a configuration file that can be reused and shared with other projects and people.  Intake calls this a "catalog", which contains a list of named entries describing how to load data sources.  The ``intake example`` created a catalog file with the following contents:
+*Intake-Postgres* can also be accessed directly as a library. This usage pattern is for users who desire to call *Intake-Postgres* from inside another application, or just want more control over how data is ingested.
 
+Here is the same example as above, except accessing *Intake-Postgres* as a library instead of through the *catalog.yml*:
 
-Installing Data Source Packages with Conda
-------------------------------------------
+    >>> import intake_postgres
+    >>> plugin = intake_postgres.Plugin()
+    >>> ds = plugin.open('postgresql://postgres@localhost:5432/postgres', 'select * from users')
+    >>> source.discover()
+    >>> df = source.read()
+    >>> df.tail()

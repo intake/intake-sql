@@ -11,7 +11,6 @@ Welcome to Intake-Postgres's documentation!
     :caption: Contents:
 
     quickstart.rst
-    overview.rst
     api.rst
 
 
