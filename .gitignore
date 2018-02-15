@@ -105,3 +105,4 @@ ENV/
 examples/*.yml
 examples/*.html
 examples/*.csv
+docs/build
