@@ -7,7 +7,7 @@ This guide illustrates how to get started using *Intake-Postgres*, an *Intake* p
 Installation
 ------------
 
-If you have a `conda-based installation <https://conda.io/docs/installation.html>`_, install *Intake* and a sample plugin with the following commands::
+If you have a `conda-based installation <https://conda.io/docs/installation.html>`_, install *Intake* and the *Intake-Postgres* plugin with the following command::
 
     conda install -c intake intake-postgres
 
