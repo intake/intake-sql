@@ -19,20 +19,18 @@ Usage of *Intake-Postgres* is easiest to illustrate with an example.
 
 In the *catalog.yml* file:
 
-
 .. code-block:: yaml
 
-plugins:
-  source:
-    - module: intake_postgres
-
-  sources:
-    - name: all_users
-      driver: postgres
-      args:
-        uri: 'postgresql://postgres@localhost:5432/postgres'
-        sql_expr: 'select * from users'
-
+    plugins:
+      source:
+        - module: intake_postgres
+    
+      sources:
+        - name: all_users
+          driver: postgres
+          args:
+            uri: 'postgresql://postgres@localhost:5432/postgres'
+            sql_expr: 'select * from users'
 
 There are two things to note in the above example:
 
