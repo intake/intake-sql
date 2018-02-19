@@ -1,0 +1,17 @@
+name: intake
+channels:
+  - intake
+  - conda-forge
+  - defaults
+dependencies:
+  - appdirs
+  - dask
+  - intake-postgres
+  - marshmallow
+  - msgpack-numpy
+  - numpydoc
+  - pandas
+  - python-snappy
+  - python=3.6
+  - sphinx
+  - sphinx_rtd_theme
