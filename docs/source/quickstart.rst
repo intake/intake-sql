@@ -39,7 +39,7 @@ There are two things to note in the above example:
 2. Any "sources" entry which includes the field `driver: postgres` includes some additional fields that are specific to the *Intake-Postgres* plugin.
    Specifically, we need to provide a `uri` to the database, and a `sql_expr` (SQL query expression).
 
-Intake can then be accessed as normally, and provided that *Intake-Postgres* is installed:
+Intake can then be accessed as normal, and provided that *Intake-Postgres* is installed:
 
     >>> import intake
     >>> catalog = intake.Catalog('catalog.yml')
