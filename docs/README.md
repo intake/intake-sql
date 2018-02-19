@@ -15,6 +15,7 @@ conda activate intake
 To make HTML documentation:
 
 ```bash
+cd docs/
 make html
 ```
 

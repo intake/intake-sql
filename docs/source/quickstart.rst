@@ -1,13 +1,13 @@
 Quickstart
 ==========
 
-This guide will show you how to get started using *Intake-Postgres* to read data stored in *PostgresSQL*. It assumes you have just completed the Intake quickstart.
+This guide will show you how to get started using *Intake-Postgres* to read data stored in the `PostgresSQL <https://www.postgresql.org>`_ RDBMS. Before continuing, please complete the *Intake* quickstart.
 
 
 Installation
 ------------
 
-If you are using *Anaconda* or *Miniconda*, install *Intake* and a sample plugin with the following commands::
+If you have a `conda-based installation <https://conda.io/docs/installation.html>`_, install *Intake* and a sample plugin with the following commands::
 
     conda install -c intake intake-postgres
 
@@ -19,18 +19,19 @@ Usage of *Intake-Postgres* is easiest to illustrate with an example.
 
 In the *catalog.yml* file:
 
+
 .. code-block:: yaml
 
-   plugins:
-     source:
-       - module: intake_postgres
-   
-     sources:
-       - name: all_users
-         driver: postgres
-         args:
-           uri: 'postgresql://postgres@localhost:5432/postgres'
-           sql_expr: 'select * from users'
+plugins:
+  source:
+    - module: intake_postgres
+
+  sources:
+    - name: all_users
+      driver: postgres
+      args:
+        uri: 'postgresql://postgres@localhost:5432/postgres'
+        sql_expr: 'select * from users'
 
 
 There are two things to note in the above example:
