@@ -36,7 +36,7 @@ There are two things to note in the above example:
 
 1. `intake_postgres` is included under "plugins".
    This only needs to be done once for each *catalog.yml* file.
-2. Any `sources` entry which includes the field `driver: postgres` includes some additional fields that are specific to the *Intake-Postgres* plugin.
+2. Any "sources" entry which includes the field `driver: postgres` includes some additional fields that are specific to the *Intake-Postgres* plugin.
    Specifically, we need to provide a `uri` to the database, and a `sql_expr` (SQL query expression).
 
 Intake can then be accessed as normally, and provided that *Intake-Postgres* is installed:
