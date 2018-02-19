@@ -1,7 +1,7 @@
 Quickstart
 ==========
 
-This guide illustrates how to get started using *Intake-Postgres*, an *Intake* plugin that adds support for ingesting data from the `PostgresSQL <https://www.postgresql.org>`_ RDBMS. Before continuing, please complete the *Intake* quickstart.
+This guide illustrates how to get started using *Intake-Postgres*, an *Intake* plugin that adds support for ingesting data from the `PostgreSQL <https://www.postgresql.org>`_ RDBMS. Before continuing, please complete the *Intake* quickstart.
 
 
 Installation
