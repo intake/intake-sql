@@ -45,7 +45,6 @@ class PostgresSource(base.DataSource):
         super(PostgresSource, self).__init__(container='dataframe',
                                              metadata=metadata)
 
-
     def _get_schema(self):
         if self._dataframe is None:
             # This approach is not optimal; LIMIT is know to confuse the query
