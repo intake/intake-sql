@@ -7,25 +7,25 @@ sources:
   # In this case, each "source" is the name of a dataset; for convenience, it
   # shares the name of the table where the data resides - but this need not be
   # the case (and will probably not be the case very often).
-  - name: sample1
+  sample1:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample1'
 
-  - name: sample2_1
+  sample2_1:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample2_1'
 
-  - name: sample2_2
+  sample2_2:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: 'select * from sample2_2'
 
-  - name: sample2
+  sample2:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
@@ -36,97 +36,97 @@ sources:
         from sample2_1 a full outer join sample2_2 b
         on a.name = b.name
 
-  - name: points
+  points:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from points
 
-  - name: multipoints
+  multipoints:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from multipoints
 
-  - name: lines
+  lines:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from lines
 
-  - name: multilines
+  multilines:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from multilines
 
-  - name: polygons
+  polygons:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from polygons
 
-  - name: multipolygons
+  multipolygons:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from multipolygons
 
-  - name: triangles
+  triangles:
     driver: postgres
     args:
       uri: 'postgresql://postgres@localhost:5432/postgres'
       sql_expr: |
         select * from triangles
 
-  - name: jinja2_env
+  jinja2_env:
     driver: postgres
     args:
       uri: !template 'postgresql://postgres@localhost:{{ env("DBPORT") }}/{{ env("DBNAME") }}'
       sql_expr: |
         select * from sample1
 
-  - name: jinja2_shell
+  jinja2_shell:
     driver: postgres
     args:
       uri: !template 'postgresql://postgres@localhost:{{ shell("echo 5432")[0] }}/{{ shell("echo postgres")[0] }}'
       sql_expr: |
         select * from sample1
 
-  - name: jinja2_shell_and_env
+  jinja2_shell_and_env:
     driver: postgres
     args:
       uri: !template 'postgresql://postgres@localhost:{{ shell("echo 5432")[0] }}/{{ env("DBNAME") }}'
       sql_expr: |
         select * from sample1
 
-  - name: jinja2_params_with_env
+  jinja2_params_with_env:
     parameters:
-      - name: port
+      port:
         description: Database port
         type: int
         default: 5432
         min: 1024
         max: 65535
-      - name: dbname
+      dbname:
         description: Database name
         type: str
         default: postgres
-      - name: username
+      username:
         description: Database username
         type: str
         default: postgres
-      - name: passwd
+      passwd:
         description: Password, gleaned from env variable
         type: str
         default: !template '{{ env("DB_PASSWD") }}'
-      - name: address
+      address:
         description: Database server address
         type: str
         default: localhost
@@ -136,23 +136,23 @@ sources:
       sql_expr: |
         select * from sample1
 
-  - name: jinja2_params_with_shell
+  jinja2_params_with_shell:
     parameters:
-      - name: port
+      port:
         description: Database port
         type: int
         default: 5432
         min: 1024
         max: 65535
-      - name: dbname
+      dbname:
         description: Database name
         type: str
         default: postgres
-      - name: username
+      username:
         description: Database username
         type: str
         default: postgres
-      - name: address
+      address:
         description: Database server address
         type: str
         default: localhost
@@ -162,23 +162,23 @@ sources:
       sql_expr: |
         select * from sample1
 
-  - name: jinja2_params_with_shell_and_env
+  jinja2_params_with_shell_and_env:
     parameters:
-      - name: port
+      port:
         description: Database port
         type: int
         default: 5432
         min: 1024
         max: 65535
-      - name: dbname
+      dbname:
         description: Database name
         type: str
         default: !template '{{ shell("echo postgres") }}'
-      - name: username
+      username:
         description: Database username
         type: str
         default: postgres
-      - name: address
+      address:
         description: Database server address
         type: str
         default: localhost
