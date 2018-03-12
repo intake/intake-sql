@@ -14,7 +14,7 @@ env:
   - CONDA_PY=35
   - CONDA_PY=36
   global:
-    secure: BTt0VMolkwMYxgPQZpwSFArYJ5GReneJws7s/P5w3RZ89trj2rRtVecUTYUIqg1qCLrltutAs/xfumYQAEgR/Lj8aC2irSm5Qo/xvcVbnozU56QsZeoNMK7vFRbF9HgPRvo8HaYmbI8dn+Av+pJhUMmsxEt+USa8TZPzVruqLhD1x+LooDnCd+TfPMt9bZtr6f3nQRcPzMV+WDyY3KMfyWxM+MvFZULzl1HpnLFJsibReyF8dvjdZwXSzaUno1saoOdY+ie8ZX3JLmki3qnr2mlhgPKySugi606LuysLPx26vDeYYd9HcHEDFB4IclOVAv46vok370SLY3S8Qa0pHcZ1Gkc9mzxTh8uW9MPFPAC7o7Oe0bcoPcKnXoIQQ9ZOvdxrjii0T5g0SG2Gqpg6wQgEP8OIVw2curXOTO/E90QuyfrWLhctRRNM0drokU9TZXzvfKwIPCOiy+C4SCivL42h89IYbB8zYkcZEFWBh3MLzq+9ySymIMeDhqLBczrf5xL/ABpO+NerQNElWDkSTE9zAtBohun7UJLIRX23sBHikbkeVWPKZtsKTDgeoSoK86VoGZFtwmcpp8VIvD4Xt4JsRSazxD0eapd1c5P+47aK2t0G6QO3LW5bMklYGCoz/vF+vHhSSnwe44uhiUXif8EBj4w6tl/NtvhGHdgvuzU=
+    secure: qEbUVp2DbwoPI9Z5TzGU3NfO13hlWfZWVeB+W+f57OuAXnzQ9AlzRbEXSqPT1/qINXcfumYKM/QRljJ6qd070GvWKlBXtZVovC5mMy5/KeFIn9h6td8bolAuQvKCDkQG3wh9X/SAWVIGUYgUOfEhusdTZC/VvmtxLFXNWOgvKUGpKPtVoHwY7+xxNfwMPxqk4uQa9m5XAIrPDE5zN2sFBSfJpfuFbflKXoOFdR5+eyf1TZs0Bxr6d8/lO997d7gyJqCM87KjlxrEzmZTuTeDi3+CP58qXkbun73ipzGemKsSridzTd/2b0Mlf8WGH0NPVVawFZo7Qc8ZOol/gxLOyaM+GKFX0ryxBrERnYbnQW7ifzkPNRV5gJLdsX+oRjptvgBXU/UK8nx18fjBdUjhitvwxd8mlcSpEc9u34P8bq3O77hjwzwo/p3azYJu1+EXcfPmkHd605bIggHJJr1F9VYgrkdSckEZK5+8DcCvn/Cjgv5Hm+9Oq26tKKuPLtJwLS4Wbv+CuwA79HHzp9zO70vfghl6UYWjAAIHuCttBh1/skSRyYWlZOkub6R9Ts4W02Sxoey3gJtIWOkZzlA6786jjDtagxV4OjSIfrdqKHhG8vPrFS3kdo199psTrhjZ2XxN3v007cqzn2SDa6ifoHhKswjKNw7uLVgHW54n2cc=
 install:
 - |
   echo "Installing a fresh version of Miniconda."
@@ -39,8 +39,9 @@ script:
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_TOKEN/intake" --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
   fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_TOKEN}
-  upload --force `conda build -c intake/label/main --output ./conda`; else echo "skipping upload"; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_TOKEN} upload
+  --force `conda build -c intake/label/main --output ./conda`; else echo "skipping
+  upload"; fi
 notifications:
   email: false
   on_success: change
