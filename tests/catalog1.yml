@@ -108,25 +108,25 @@ sources:
 
   jinja2_params_with_env:
     parameters:
-      - name: port
+      port:
         description: Database port
         type: int
         default: 5432
         min: 1024
         max: 65535
-      - name: dbname
+      dbname:
         description: Database name
         type: str
         default: postgres
-      - name: username
+      username:
         description: Database username
         type: str
         default: postgres
-      - name: passwd
+      passwd:
         description: Password, gleaned from env variable
         type: str
         default: !template '{{ env("DB_PASSWD") }}'
-      - name: address
+      address:
         description: Database server address
         type: str
         default: localhost
@@ -138,21 +138,21 @@ sources:
 
   jinja2_params_with_shell:
     parameters:
-      - name: port
+      port:
         description: Database port
         type: int
         default: 5432
         min: 1024
         max: 65535
-      - name: dbname
+      dbname:
         description: Database name
         type: str
         default: postgres
-      - name: username
+      username:
         description: Database username
         type: str
         default: postgres
-      - name: address
+      address:
         description: Database server address
         type: str
         default: localhost
@@ -164,21 +164,21 @@ sources:
 
   jinja2_params_with_shell_and_env:
     parameters:
-      - name: port
+      port:
         description: Database port
         type: int
         default: 5432
         min: 1024
         max: 65535
-      - name: dbname
+      dbname:
         description: Database name
         type: str
         default: !template '{{ shell("echo postgres") }}'
-      - name: username
+      username:
         description: Database username
         type: str
         default: postgres
-      - name: address
+      address:
         description: Database server address
         type: str
         default: localhost
