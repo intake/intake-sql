@@ -26,7 +26,7 @@ In the *catalog.yml* file:
         - module: intake_postgres
     
       sources:
-        - name: all_users
+        all_users:
           driver: postgres
           args:
             uri: 'postgresql://postgres@localhost:5432/postgres'
