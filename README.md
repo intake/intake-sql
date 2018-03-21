@@ -1,6 +1,9 @@
 # intake-postgres
 
-Intake-Postgres: PostgreSQL Plugin for Intake
+[![Build Status](https://travis-ci.org/ContinuumIO/intake-postgres.svg?branch=master)](https://travis-ci.org/ContinuumIO/intake-postgres)
+[![Documentation Status](https://readthedocs.org/projects/intake-postgres/badge/?version=latest)](http://intake-postgres.readthedocs.io/en/latest/?badge=latest)
+
+PostgreSQL Plugin for [Intake](https://github.com/ContinuumIO/intake)
 
 ## User Installation
 
