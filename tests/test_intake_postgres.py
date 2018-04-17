@@ -25,12 +25,7 @@ TEST_GIS_DATA = [
     # ('triangles', 'sample_triangles.psql'),
 ]
 TEST_TEMPLATE_DATA = [
-    'jinja2_env',
-    'jinja2_shell',
-    'jinja2_shell_and_env',
     'jinja2_params_with_env',
-    'jinja2_params_with_shell',
-    'jinja2_params_with_shell_and_env',
 ]
 
 
@@ -86,7 +81,7 @@ def test_discover(engine, table_name, csv_fpath):
     p = postgres.Plugin()
     source = p.open(str(engine.url), 'select * from '+table_name)
     info = source.discover()
-    assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
+    assert info['dtype'].equals(expected_df[:0])
     assert info['shape'] == (None, 3)
     assert info['npartitions'] == 1
 
@@ -109,7 +104,7 @@ def test_discover_after_read(engine, table_name, csv_fpath):
     p = postgres.Plugin()
     source = p.open(str(engine.url), 'select * from '+table_name)
     info = source.discover()
-    assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
+    assert info['dtype'].equals(expected_df[:0])
     assert info['shape'] == (None, 3)
     assert info['npartitions'] == 1
 
@@ -117,7 +112,7 @@ def test_discover_after_read(engine, table_name, csv_fpath):
     assert expected_df.equals(df)
 
     info = source.discover()
-    assert info['dtype'] == list(zip(expected_df.columns, expected_df.dtypes))
+    assert info['dtype'].equals(expected_df[:0])
     assert info['shape'] == (4, 3)
     assert info['npartitions'] == 1
 

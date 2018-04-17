@@ -4,3 +4,5 @@ recursive-include . *.yml
 
 include ./versioneer.py
 include ./_version.py
+include versioneer.py
+include intake_postgres/_version.py

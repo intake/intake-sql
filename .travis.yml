@@ -2,7 +2,6 @@ language: generic
 sudo: required
 os:
 - linux
-- osx
 services:
 - docker
 branches:
@@ -10,8 +9,6 @@ branches:
   - master
 env:
   matrix:
-  - CONDA_PY=27
-  - CONDA_PY=35
   - CONDA_PY=36
   global:
     secure: qEbUVp2DbwoPI9Z5TzGU3NfO13hlWfZWVeB+W+f57OuAXnzQ9AlzRbEXSqPT1/qINXcfumYKM/QRljJ6qd070GvWKlBXtZVovC5mMy5/KeFIn9h6td8bolAuQvKCDkQG3wh9X/SAWVIGUYgUOfEhusdTZC/VvmtxLFXNWOgvKUGpKPtVoHwY7+xxNfwMPxqk4uQa9m5XAIrPDE5zN2sFBSfJpfuFbflKXoOFdR5+eyf1TZs0Bxr6d8/lO997d7gyJqCM87KjlxrEzmZTuTeDi3+CP58qXkbun73ipzGemKsSridzTd/2b0Mlf8WGH0NPVVawFZo7Qc8ZOol/gxLOyaM+GKFX0ryxBrERnYbnQW7ifzkPNRV5gJLdsX+oRjptvgBXU/UK8nx18fjBdUjhitvwxd8mlcSpEc9u34P8bq3O77hjwzwo/p3azYJu1+EXcfPmkHd605bIggHJJr1F9VYgrkdSckEZK5+8DcCvn/Cjgv5Hm+9Oq26tKKuPLtJwLS4Wbv+CuwA79HHzp9zO70vfghl6UYWjAAIHuCttBh1/skSRyYWlZOkub6R9Ts4W02Sxoey3gJtIWOkZzlA6786jjDtagxV4OjSIfrdqKHhG8vPrFS3kdo199psTrhjZ2XxN3v007cqzn2SDa6ifoHhKswjKNw7uLVgHW54n2cc=
@@ -33,15 +30,21 @@ install:
   # conda remove -y python.app
 script:
 - |
+  flake8 .
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_TOKEN/intake" --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
+      conda build -c intake -c defaults -c conda-forge ./conda
   else
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_TOKEN/intake" --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
+      conda build -c intake -c defaults -c conda-forge --no-test ./conda
   fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then anaconda -t ${ANACONDA_TOKEN} upload
-  --force `conda build -c intake/label/main --output ./conda`; else echo "skipping
-  upload"; fi
+- |
+  if [ -n "$TRAVIS_TAG" ]; then
+      # If tagged git version, upload package to main channel
+      anaconda -t ${ANACONDA_TOKEN} upload -u intake --force `conda build --output ./conda`
+  else
+      # Otherwise upload package to dev channel
+      anaconda -t ${ANACONDA_TOKEN} upload -u intake --label dev --force `conda build --output ./conda`
+  fi
 notifications:
   email: false
   on_success: change
