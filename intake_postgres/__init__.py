@@ -5,6 +5,7 @@ del get_versions
 
 
 class Plugin(base.Plugin):
+    """Create PostgresSource objects"""
     def __init__(self):
         super(Plugin, self).__init__(name='postgres',
                                      version=__version__,

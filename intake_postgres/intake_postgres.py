@@ -4,7 +4,19 @@ from postgresadapter import PostgresAdapter
 
 
 class PostgresSource(base.DataSource):
-    def __init__(self, uri, sql_expr, pg_kwargs, metadata):
+    """Read data from PostgreSQL to dataframes
+
+    Parameters
+    ----------
+    uri: str
+        Connection to PostgreSQL server
+    sql_expr: str
+        The full text of the SQL query to execute
+    pg_kwargs: dict
+        Further args passed to postgresadapter.PostgresAdapter, see
+        https://github.com/ContinuumIO/PostgresAdapter/blob/master/postgresadapter/core/PostgresAdapter.pyx#L281
+    """
+    def __init__(self, uri, sql_expr, pg_kwargs, metadata=None):
         self._init_args = {
             'uri': uri,
             'sql_expr': sql_expr,
