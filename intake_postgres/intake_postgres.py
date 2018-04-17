@@ -34,8 +34,7 @@ class PostgresSource(base.DataSource):
             dtype = first_rows[:0]
             shape = (None, len(first_rows.dtypes.index))
         else:
-            dtype = list(zip(self._dataframe.dtypes.index,
-                             self._dataframe.dtypes))
+            dtype = self._dataframe[:0]
             shape = self._dataframe.shape
         return base.Schema(datashape=None,
                            dtype=dtype,
