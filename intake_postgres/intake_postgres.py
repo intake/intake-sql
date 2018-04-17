@@ -3,31 +3,6 @@ import pandas as pd
 from postgresadapter import PostgresAdapter
 
 
-class Plugin(base.Plugin):
-    def __init__(self):
-        super(Plugin, self).__init__(name='postgres',
-                                     version='0.1',
-                                     container='dataframe',
-                                     partition_access=False)
-
-    def open(self, uri, sql_expr, **kwargs):
-        """
-        Parameters:
-            uri : str
-                Full SQLAlchemy URI for the database connection.
-            sql_expr : string or SQLAlchemy Selectable (select or text object):
-                SQL query to be executed.
-            kwargs (dict):
-                Additional parameters to pass as keyword arguments to
-                ``PostgresAdapter`` constructor.
-        """
-        base_kwargs, source_kwargs = self.separate_base_kwargs(kwargs)
-        return PostgresSource(uri=uri,
-                              sql_expr=sql_expr,
-                              pg_kwargs=source_kwargs,
-                              metadata=base_kwargs['metadata'])
-
-
 class PostgresSource(base.DataSource):
     def __init__(self, uri, sql_expr, pg_kwargs, metadata):
         self._init_args = {
@@ -50,14 +25,14 @@ class PostgresSource(base.DataSource):
             # This approach is not optimal; LIMIT is know to confuse the query
             # planner sometimes. If there is a faster approach to gleaning
             # dtypes from arbitrary SQL queries, we should use it instead.
-            first_row = PostgresAdapter(
+            first_rows = PostgresAdapter(
                 self._uri,
                 dataframe=True,
-                query=('({}) limit 1').format(self._sql_expr),
+                query=('({}) limit 10').format(self._sql_expr),
                 **self._pg_kwargs
             )._to_dataframe()
-            dtype = list(zip(first_row.dtypes.index, first_row.dtypes))
-            shape = (None, len(first_row.dtypes.index))
+            dtype = first_rows[:0]
+            shape = (None, len(first_rows.dtypes.index))
         else:
             dtype = list(zip(self._dataframe.dtypes.index,
                              self._dataframe.dtypes))

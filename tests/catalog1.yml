@@ -1,7 +1,7 @@
 plugins:
   source:
     - module: intake_postgres
-    - dir: !template '{{ CATALOG_DIR }}/plugin_dir'
+    - dir: '{{ CATALOG_DIR }}/plugin_dir'
 
 sources:
   # In this case, each "source" is the name of a dataset; for convenience, it
@@ -85,27 +85,6 @@ sources:
       sql_expr: |
         select * from triangles
 
-  jinja2_env:
-    driver: postgres
-    args:
-      uri: !template 'postgresql://postgres@localhost:{{ env("DBPORT") }}/{{ env("DBNAME") }}'
-      sql_expr: |
-        select * from sample1
-
-  jinja2_shell:
-    driver: postgres
-    args:
-      uri: !template 'postgresql://postgres@localhost:{{ shell("echo 5432")[0] }}/{{ shell("echo postgres")[0] }}'
-      sql_expr: |
-        select * from sample1
-
-  jinja2_shell_and_env:
-    driver: postgres
-    args:
-      uri: !template 'postgresql://postgres@localhost:{{ shell("echo 5432")[0] }}/{{ env("DBNAME") }}'
-      sql_expr: |
-        select * from sample1
-
   jinja2_params_with_env:
     parameters:
       port:
@@ -125,65 +104,13 @@ sources:
       passwd:
         description: Password, gleaned from env variable
         type: str
-        default: !template '{{ env("DB_PASSWD") }}'
+        default: '{{ env(DB_PASSWD) }}'
       address:
         description: Database server address
         type: str
         default: localhost
     driver: postgres
     args:
-      uri: !template 'postgresql://{{ username }}:{{ passwd }}@{{ address }}:{{ port }}/{{ dbname }}'
-      sql_expr: |
-        select * from sample1
-
-  jinja2_params_with_shell:
-    parameters:
-      port:
-        description: Database port
-        type: int
-        default: 5432
-        min: 1024
-        max: 65535
-      dbname:
-        description: Database name
-        type: str
-        default: postgres
-      username:
-        description: Database username
-        type: str
-        default: postgres
-      address:
-        description: Database server address
-        type: str
-        default: localhost
-    driver: postgres
-    args:
-      uri: !template 'postgresql://{{ username }}:{{ env("DB_PASSWD") }}@{{ address }}:{{ port }}/{{ dbname }}'
-      sql_expr: |
-        select * from sample1
-
-  jinja2_params_with_shell_and_env:
-    parameters:
-      port:
-        description: Database port
-        type: int
-        default: 5432
-        min: 1024
-        max: 65535
-      dbname:
-        description: Database name
-        type: str
-        default: !template '{{ shell("echo postgres") }}'
-      username:
-        description: Database username
-        type: str
-        default: postgres
-      address:
-        description: Database server address
-        type: str
-        default: localhost
-    driver: postgres
-    args:
-      uri: !template 'postgresql://{{ username }}:{{ env("DB_PASSWD") }}@{{ address }}:{{ port }}/{{ dbname }}'
+      uri: 'postgresql://{{ username }}:{{ passwd }}@{{ address }}:{{ port }}/{{ dbname }}'
       sql_expr: |
         select * from sample1

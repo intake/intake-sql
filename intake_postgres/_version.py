@@ -42,8 +42,8 @@ def get_config():
     cfg.VCS = "git"
     cfg.style = "pep440"
     cfg.tag_prefix = ""
-    cfg.parentdir_prefix = "intake-postgres-"
-    cfg.versionfile_source = "./_version.py"
+    cfg.parentdir_prefix = "None"
+    cfg.versionfile_source = "intake_postgres/_version.py"
     cfg.verbose = False
     return cfg
 

@@ -1,1 +1,2 @@
 _version.py export-subst
+intake_postgres/_version.py export-subst
