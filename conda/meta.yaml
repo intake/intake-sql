@@ -1,0 +1,39 @@
+package:
+   name: intake-odbc
+   version: {{ GIT_DESCRIBE_TAG }}
+
+source:
+   path: ..
+
+build:
+  number: {{ GIT_DESCRIBE_NUMBER|int }}
+  noarch: python
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - jinja2
+  run:
+    - python
+    - intake
+    - turbodbc
+    - pyarrow
+    - pandas
+
+test:
+  source_files:
+    - tests
+  requires:
+    - pytest
+    - pytest-cov
+    - coverage
+  commands:
+    - py.test --verbose --cov=intake_odbc tests
+
+about:
+  home: https://github.com/ContinuumIO/intake-odbc
+  license: BSD
+  license_file: LICENSE
+  summary: |
+    ODBC plugin for Intake
