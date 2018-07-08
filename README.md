@@ -1,4 +1,4 @@
-# Intake-ODBC
+# Intake-SQL
 [![Build Status](https://travis-ci.org/ContinuumIO/intake-sql.svg?branch=master)](https://travis-ci.org/ContinuumIO/intake-sql)
 [![Documentation Status](https://readthedocs.org/projects/intake-sql/badge/?version=latest)](http://intake-sql.readthedocs.io/en/latest/?badge=latest)
 
