@@ -182,16 +182,9 @@ class SQLSourceManualPartition(base.DataSource):
                                                        metadata=metadata)
 
     def _load(self):
-        import dask
-        import dask.dataframe as dd
-        if self._where_tmp is not None:
-            where = [self._where_tmp.format(values) for values in self._where]
-        else:
-            where = self._where
-        dload = dask.delayed(load_part)
-        parts = [dload(self._sql_expr, self._uri, w, self._sql_kwargs)
-                 for w in where]
-        self._dataframe = dd.from_delayed(parts, meta=self._meta)
+        self._dataframe = read_sql_query(self._uri, self._sql_expr,
+                                         self._where, where_tmp=self._where_tmp,
+                                         meta=self._meta, **self._sql_kwargs)
 
     def _get_schema(self):
         if self._dataframe is None:
@@ -228,3 +221,15 @@ def load_part(sql, engine, where, kwargs, meta=None):
         else:
             df = df.astype(meta.dtypes.to_dict(), copy=False)
     return df
+
+
+def read_sql_query(uri, sql, where, where_tmp=None, meta=None, kwargs=None):
+    import dask
+    import dask.dataframe as dd
+    if where_tmp is not None:
+        where = [where_tmp.format(values) for values in where]
+    if kwargs is None:
+        kwargs = {}
+    dload = dask.delayed(load_part)
+    parts = [dload(sql, uri, w, kwargs) for w in where]
+    return dd.from_delayed(parts, meta=meta)

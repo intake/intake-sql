@@ -1,2 +1,2 @@
-Intake-ODBC: ODBC Plugin for Intake
+Intake-SQL: SQL Plugin for Intake
 -----------------------------------
