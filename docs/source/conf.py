@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# intake_odbc documentation build configuration file, created by
+# intake_sql documentation build configuration file, created by
 # sphinx-quickstart on Mon Jan 15 18:11:02 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -50,7 +50,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'intake_odbc'
+project = u'intake_sql'
 copyright = u'2018, Martin Durant'
 author = u'Martin Durant'
 
@@ -59,6 +59,7 @@ author = u'Martin Durant'
 # built documents.
 #
 # The short X.Y version.
+# TODO: this should be populated from the release version
 version = u'0.0.1'
 # The full version, including alpha/beta/rc tags.
 release = u'0.0.1'
@@ -116,7 +117,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'intake_odbcdoc'
+htmlhelp_basename = 'intake_sqldoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -143,7 +144,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'intake_odbc.tex', u'intake\\_odbc Documentation',
+    (master_doc, 'intake_sql.tex', u'intake\\_sql Documentation',
      u'Joseph Crail', 'manual'),
 ]
 
@@ -153,7 +154,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'intake_odbc', u'intake_odbc Documentation',
+    (master_doc, 'intake_sql', u'intake_sql Documentation',
      [author], 1)
 ]
 
@@ -164,7 +165,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'intake_odbc', u'intake_odbc Documentation',
-     author, 'intake_odbc', 'One line description of project.',
+    (master_doc, 'intake_sql', u'intake_sql Documentation',
+     author, 'intake_sql', 'One line description of project.',
      'Miscellaneous'),
 ]

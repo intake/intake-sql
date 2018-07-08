@@ -6,16 +6,16 @@ import versioneer
 requires = open('requirements.txt').read().strip().split('\n')
 
 setup(
-    name='intake-odbc',
+    name='intake-sql',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description='ODBC plugin for Intake',
-    url='https://github.com/ContinuumIO/intake-odbc',
-    maintainer='Stan Seibert',
-    maintainer_email='sseibert@anaconda.com',
+    description='SQL plugin for Intake',
+    url='https://github.com/ContinuumIO/intake-sql',
+    maintainer='Martin Durant',
+    maintainer_email='mdurant@anaconda.com',
     license='BSD',
-    py_modules=['intake_odbc'],
-    packages=['intake_odbc'],
+    py_modules=['intake_sql'],
+    packages=['intake_sql'],
     package_data={'': ['*.csv', '*.yml', '*.html']},
     include_package_data=True,
     install_requires=requires,

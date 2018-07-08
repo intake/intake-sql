@@ -1,5 +1,5 @@
 package:
-   name: intake-odbc
+   name: intake-sql
    version: {{ GIT_DESCRIBE_TAG }}
 
 source:
@@ -17,8 +17,7 @@ requirements:
   run:
     - python
     - intake
-    - turbodbc
-    - pyarrow
+    - sqlalchemy
     - pandas
 
 test:
@@ -29,11 +28,11 @@ test:
     - pytest-cov
     - coverage
   commands:
-    - py.test --verbose --cov=intake_odbc tests
+    - py.test --verbose --cov=intake_sql tests
 
 about:
-  home: https://github.com/ContinuumIO/intake-odbc
+  home: https://github.com/ContinuumIO/intake-sql
   license: BSD
   license_file: LICENSE
   summary: |
-    ODBC plugin for Intake
+    sql plugin for Intake

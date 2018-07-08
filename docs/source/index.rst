@@ -1,4 +1,4 @@
-Welcome to intake_parquet's documentation!
+Welcome to intake_sql's documentation!
 ==========================================
 
 .. toctree::
