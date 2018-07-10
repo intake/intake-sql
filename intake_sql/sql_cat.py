@@ -1,6 +1,6 @@
 
 from intake import Catalog
-from .intake_sql import SQLSourceAutoPartition
+from intake.catalog.local import LocalCatalogEntry
 
 
 class SQLCatalog(Catalog):
@@ -23,6 +23,7 @@ class SQLCatalog(Catalog):
 
     def reload(self):
         import sqlalchemy
+        from intake_sql import SQLAutoPartitionPlugin
         engine = sqlalchemy.create_engine(self.uri)
         meta = sqlalchemy.MetaData(bind=engine)
         meta.reflect(views=self.views)
@@ -31,8 +32,15 @@ class SQLCatalog(Catalog):
         for name, table in meta.tables.items():
             for c in table.columns:
                 if c.primary_key:
-                    e = SQLSourceAutoPartition(self.uri, name, c.name,
-                                               self.kwargs)
+                    description = 'SQL table %s from %s' % (name, self.uri)
+                    args = {'uri': self.uri, 'sql_expr': name, 'index': c.name}
+                    args.update(self.kwargs)
+                    e = LocalCatalogEntry(name, description, 'sql_auto', True,
+                                          args, {},
+                                          dict(table.columns),
+                                          "", getenv=False,
+                                          getshell=False)
+                    e._plugin = SQLAutoPartitionPlugin()
                     self._entries.append(e)
                     self._all_entries[name] = e
                     break

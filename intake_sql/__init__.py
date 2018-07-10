@@ -32,7 +32,7 @@ class SQLAutoPartitionPlugin(base.Plugin):
     """
 
     def __init__(self):
-        super(SQLAutoPartitionPlugin, self).__init__(name='sql',
+        super(SQLAutoPartitionPlugin, self).__init__(name='sql_auto',
                                                      version=__version__,
                                                      container='dataframe',
                                                      partition_access=True)
@@ -54,7 +54,7 @@ class SQLManualPartition(base.Plugin):
     """
 
     def __init__(self):
-        super(SQLManualPartition, self).__init__(name='sql',
+        super(SQLManualPartition, self).__init__(name='sql_manual',
                                                  version=__version__,
                                                  container='dataframe',
                                                  partition_access=False)
