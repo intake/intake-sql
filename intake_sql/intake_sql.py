@@ -152,13 +152,18 @@ class SQLSourceManualPartition(base.DataSource):
     ----------
     uri: str or None
         Full connection string in sqlalchemy syntax
-    table: str
-        Table to read
+    sql_exp: str
+        SQL expression to evaluate
     where_values: list of str or list of values/tuples
+        Either a set of explicit partitioning statements (e.g.,
+        `"WHERE index_col < 50"`...) or pairs of valued to be entered into
+        where_template, if using
     where_template: str (optional)
-
+        Template for generating partition selection clauses, using the
+        values from where_values, e.g.,
+        `"WHERE index_col >= {} AND index_col < {}"`
     sql_kwargs: dict
-        Further arguments to pass to dask.dataframe.read_sql
+        Further arguments to pass to pd.read_sql_query
     """
 
     def __init__(self, uri, sql_expr, where_values, where_template=None,
@@ -173,7 +178,8 @@ class SQLSourceManualPartition(base.DataSource):
         }
 
         self._uri = uri
-        self._sql_expr = sql_expr
+        self._sql_expr = sql_expr  # TODO: may check for table and expand to
+                                   # "SELECT * FROM {table}"
         self._sql_kwargs = sql_kwargs
         self._where = where_values
         self._where_tmp = where_template
@@ -227,6 +233,31 @@ def load_part(sql, engine, where, kwargs, meta=None):
 
 
 def read_sql_query(uri, sql, where, where_tmp=None, meta=None, kwargs=None):
+    """
+    Create a dask dataframe from SQL using explicit partitioning
+
+    Parameters
+    ----------
+    uri: str
+        connection string (sql sqlalchemy documentation)
+    sql: str
+        SQL query to execute
+    where: list of str or list of tuple
+        Either a set of explicit partitioning statements (e.g.,
+        `"WHERE index_col < 50"`...) or pairs of valued to be entered into
+        where_template, if using
+    where_tmp: str (optional)
+        Template for generating partition selection clauses, using the
+        values from where_values, e.g.,
+        `"WHERE index_col >= {} AND index_col < {}"`
+    meta: dataframe metadata (optional)
+        If given, a zero-length version of the dataframe structure, with
+        index and column names and types correctly specified. Can also be
+        the same information in dictionary or tuple of tuples format
+    kwargs: dict
+        Any further parameters to pass to pd.read_sql_query, see
+        its documentation
+    """
     import dask
     import dask.dataframe as dd
     if where_tmp is not None:
