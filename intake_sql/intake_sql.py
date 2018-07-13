@@ -40,6 +40,8 @@ class SQLSource(base.DataSource):
 
     def _get_schema(self):
         if self._dataframe is None:
+            # TODO: could do read_sql with chunksize to get likely schema from
+            # first few records, rather than loading the whole thing
             self._load()
         return base.Schema(datashape=None,
                            dtype=self._dataframe.dtypes,
@@ -184,7 +186,8 @@ class SQLSourceManualPartition(base.DataSource):
     def _load(self):
         self._dataframe = read_sql_query(self._uri, self._sql_expr,
                                          self._where, where_tmp=self._where_tmp,
-                                         meta=self._meta, **self._sql_kwargs)
+                                         meta=self._meta,
+                                         kwargs=self._sql_kwargs)
 
     def _get_schema(self):
         if self._dataframe is None:
