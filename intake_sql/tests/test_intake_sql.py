@@ -1,8 +1,6 @@
-import intake
 from intake_sql import SQLManualPartition, SQLAutoPartitionPlugin, SQLPlugin
 from intake_sql.tests.utils import temp_db, df
 import pandas as pd
-import pytest
 
 
 def test_fixture(temp_db):
