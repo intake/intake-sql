@@ -146,13 +146,11 @@ class SQLSourceManualPartition(base.DataSource):
     partition in order to determine the schema. If some of the partitions are
     empty, loading without a meta will likely fail.
 
-    ## TODO: implement meta=True or similar to mean "get meta from first part"?
-
     Parameters
     ----------
     uri: str or None
         Full connection string in sqlalchemy syntax
-    sql_exp: str
+    sql_expr: str
         SQL expression to evaluate
     where_values: list of str or list of values/tuples
         Either a set of explicit partitioning statements (e.g.,

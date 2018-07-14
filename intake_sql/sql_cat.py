@@ -16,10 +16,13 @@ class SQLCatalog(Catalog):
         self.getenv = kwargs.pop('getenv', True)
         self.getshell = kwargs.pop('getshell', True)
         self.auth = kwargs.pop('auth', None)
+        self.metadata = kwargs.get('metadata', {})
         self.kwargs = kwargs
         self.metadata = {}
         self._entries = []
         self.reload()
+        # NB: does not call parent class, since we don't want to make a state
+        # object
 
     def reload(self):
         import sqlalchemy

@@ -69,3 +69,24 @@ class SQLManualPartition(base.Plugin):
         return SQLSourceManualPartition(uri, sql_expr, where_values,
                                         sql_kwargs=source_kwargs,
                                         metadata=base_kwargs['metadata'])
+
+
+class SQLCatalog(base.Plugin):
+    """
+    Generate data source entries from tables in a database
+    """
+
+    def __init__(self):
+        super(SQLCatalog, self).__init__(name='sql_cat',
+                                         version=__version__,
+                                         container='catalog',
+                                         partition_access=None)
+
+    def open(self, uri, **kwargs):
+        """
+        Create SQLCatalog instance for given connection
+        """
+        from intake_sql.sql_cat import SQLCatalog
+        base_kwargs, source_kwargs = self.separate_base_kwargs(kwargs)
+        return SQLCatalog(uri,
+                          metadata=base_kwargs['metadata'], **source_kwargs)
