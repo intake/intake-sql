@@ -1,5 +1,5 @@
 from intake.source import base
-import pandas as pd
+from . import __version__
 
 
 class SQLSource(base.DataSource):
@@ -17,6 +17,10 @@ class SQLSource(base.DataSource):
     sql_kwargs: dict
         Further arguments to pass to pandas.read_sql
     """
+    name = 'sql'
+    version = __version__
+    container = 'dataframe'
+    partition_access = True
 
     def __init__(self, uri, sql_expr, sql_kwargs={}, metadata={}):
         self._init_args = {
@@ -35,6 +39,7 @@ class SQLSource(base.DataSource):
                                         metadata=metadata)
 
     def _load(self):
+        import pandas as pd
         self._dataframe = pd.read_sql(self._sql_expr, self._uri,
                                       **self._sql_kwargs)
 
@@ -81,6 +86,10 @@ class SQLSourceAutoPartition(base.DataSource):
     sql_kwargs: dict
         Further arguments to pass to dask.dataframe.read_sql
     """
+    name = 'sql_auto'
+    version = __version__
+    container = 'dataframe'
+    partition_access = True
 
     def __init__(self, uri, table, index, sql_kwargs={}, metadata={}):
         self._init_args = {
@@ -163,6 +172,10 @@ class SQLSourceManualPartition(base.DataSource):
     sql_kwargs: dict
         Further arguments to pass to pd.read_sql_query
     """
+    name = 'sql_manual'
+    version = __version__
+    container = 'dataframe'
+    partition_access = True
 
     def __init__(self, uri, sql_expr, where_values, where_template=None,
                  sql_kwargs={}, metadata={}):
@@ -220,6 +233,7 @@ class SQLSourceManualPartition(base.DataSource):
 
 
 def load_part(sql, engine, where, kwargs, meta=None):
+    import pandas as pd
     sql = sql + ' ' + where
     df = pd.read_sql(sql, engine, **kwargs)
     if meta is not None:
