@@ -1,43 +1,41 @@
 
-from intake import Catalog
-from .intake_sql import SQLSourceAutoPartition
+from . import __version__
+from intake.catalog.base import Catalog
+from intake.catalog.local import LocalCatalogEntry
 
 
 class SQLCatalog(Catalog):
     """
     Makes data sources out of known tables in the given SQL service
     """
+    name = 'sql_cat'
+    version = __version__
 
     def __init__(self, uri, views=False, **kwargs):
         self.uri = uri
         self.views = views
-        self.name = kwargs.get('name', None)
-        self.ttl = kwargs.get('ttl', 1)
-        self.getenv = kwargs.pop('getenv', True)
-        self.getshell = kwargs.pop('getshell', True)
-        self.auth = kwargs.pop('auth', None)
-        self.kwargs = kwargs
-        self.metadata = {}
-        self._entries = []
-        self.reload()
+        self.container = 'catalog'
+        super(SQLCatalog, self).__init__(**kwargs)
+        self.name = "SQLCatalog"
 
-    def reload(self):
+    def _load(self):
         import sqlalchemy
+        from intake_sql import SQLSourceAutoPartition
         engine = sqlalchemy.create_engine(self.uri)
         meta = sqlalchemy.MetaData(bind=engine)
         meta.reflect(views=self.views)
-        self._entries = []
-        self._all_entries = {}
+        self._entries = {}
         for name, table in meta.tables.items():
             for c in table.columns:
                 if c.primary_key:
-                    e = SQLSourceAutoPartition(self.uri, name, c.name,
-                                               self.kwargs)
-                    self._entries.append(e)
-                    self._all_entries[name] = e
+                    description = 'SQL table %s from %s' % (name, self.uri)
+                    args = {'uri': self.uri, 'table': name, 'index': c.name,
+                            'sql_kwargs': self.kwargs}
+                    e = LocalCatalogEntry(name, description, 'sql_auto', True,
+                                          args, {},
+                                          {},
+                                          "", getenv=False,
+                                          getshell=False)
+                    e._plugin = SQLSourceAutoPartition
+                    self._entries[name] = e
                     break
-        self._entry_tree = self._all_entries
-
-    @property
-    def changed(self):
-        return False

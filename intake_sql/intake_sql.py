@@ -1,5 +1,5 @@
 from intake.source import base
-import pandas as pd
+from . import __version__
 
 
 class SQLSource(base.DataSource):
@@ -17,6 +17,10 @@ class SQLSource(base.DataSource):
     sql_kwargs: dict
         Further arguments to pass to pandas.read_sql
     """
+    name = 'sql'
+    version = __version__
+    container = 'dataframe'
+    partition_access = True
 
     def __init__(self, uri, sql_expr, sql_kwargs={}, metadata={}):
         self._init_args = {
@@ -35,11 +39,14 @@ class SQLSource(base.DataSource):
                                         metadata=metadata)
 
     def _load(self):
+        import pandas as pd
         self._dataframe = pd.read_sql(self._sql_expr, self._uri,
                                       **self._sql_kwargs)
 
     def _get_schema(self):
         if self._dataframe is None:
+            # TODO: could do read_sql with chunksize to get likely schema from
+            # first few records, rather than loading the whole thing
             self._load()
         return base.Schema(datashape=None,
                            dtype=self._dataframe.dtypes,
@@ -51,6 +58,9 @@ class SQLSource(base.DataSource):
         if self._dataframe is None:
             self._load_metadata()
         return self._dataframe
+
+    def read(self):
+        return self._get_partition(None)
 
     def _close(self):
         self._dataframe = None
@@ -79,6 +89,10 @@ class SQLSourceAutoPartition(base.DataSource):
     sql_kwargs: dict
         Further arguments to pass to dask.dataframe.read_sql
     """
+    name = 'sql_auto'
+    version = __version__
+    container = 'dataframe'
+    partition_access = True
 
     def __init__(self, uri, table, index, sql_kwargs={}, metadata={}):
         self._init_args = {
@@ -144,20 +158,27 @@ class SQLSourceManualPartition(base.DataSource):
     partition in order to determine the schema. If some of the partitions are
     empty, loading without a meta will likely fail.
 
-    ## TODO: implement meta=True or similar to mean "get meta from first part"?
-
     Parameters
     ----------
     uri: str or None
         Full connection string in sqlalchemy syntax
-    table: str
-        Table to read
+    sql_expr: str
+        SQL expression to evaluate
     where_values: list of str or list of values/tuples
+        Either a set of explicit partitioning statements (e.g.,
+        `"WHERE index_col < 50"`...) or pairs of valued to be entered into
+        where_template, if using
     where_template: str (optional)
-
+        Template for generating partition selection clauses, using the
+        values from where_values, e.g.,
+        `"WHERE index_col >= {} AND index_col < {}"`
     sql_kwargs: dict
-        Further arguments to pass to dask.dataframe.read_sql
+        Further arguments to pass to pd.read_sql_query
     """
+    name = 'sql_manual'
+    version = __version__
+    container = 'dataframe'
+    partition_access = True
 
     def __init__(self, uri, sql_expr, where_values, where_template=None,
                  sql_kwargs={}, metadata={}):
@@ -171,7 +192,8 @@ class SQLSourceManualPartition(base.DataSource):
         }
 
         self._uri = uri
-        self._sql_expr = sql_expr
+        self._sql_expr = sql_expr  # TODO: may check for table and expand to
+                                   # "SELECT * FROM {table}"
         self._sql_kwargs = sql_kwargs
         self._where = where_values
         self._where_tmp = where_template
@@ -184,7 +206,8 @@ class SQLSourceManualPartition(base.DataSource):
     def _load(self):
         self._dataframe = read_sql_query(self._uri, self._sql_expr,
                                          self._where, where_tmp=self._where_tmp,
-                                         meta=self._meta, **self._sql_kwargs)
+                                         meta=self._meta,
+                                         kwargs=self._sql_kwargs)
 
     def _get_schema(self):
         if self._dataframe is None:
@@ -213,6 +236,7 @@ class SQLSourceManualPartition(base.DataSource):
 
 
 def load_part(sql, engine, where, kwargs, meta=None):
+    import pandas as pd
     sql = sql + ' ' + where
     df = pd.read_sql(sql, engine, **kwargs)
     if meta is not None:
@@ -224,6 +248,31 @@ def load_part(sql, engine, where, kwargs, meta=None):
 
 
 def read_sql_query(uri, sql, where, where_tmp=None, meta=None, kwargs=None):
+    """
+    Create a dask dataframe from SQL using explicit partitioning
+
+    Parameters
+    ----------
+    uri: str
+        connection string (sql sqlalchemy documentation)
+    sql: str
+        SQL query to execute
+    where: list of str or list of tuple
+        Either a set of explicit partitioning statements (e.g.,
+        `"WHERE index_col < 50"`...) or pairs of valued to be entered into
+        where_template, if using
+    where_tmp: str (optional)
+        Template for generating partition selection clauses, using the
+        values from where_values, e.g.,
+        `"WHERE index_col >= {} AND index_col < {}"`
+    meta: dataframe metadata (optional)
+        If given, a zero-length version of the dataframe structure, with
+        index and column names and types correctly specified. Can also be
+        the same information in dictionary or tuple of tuples format
+    kwargs: dict
+        Any further parameters to pass to pd.read_sql_query, see
+        its documentation
+    """
     import dask
     import dask.dataframe as dd
     if where_tmp is not None:

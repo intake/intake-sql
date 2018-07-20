@@ -1,0 +1,13 @@
+sources:
+  tables:
+    args:
+        uri: "{{URI}}"
+    parameters: # User defined parameters
+      URI:
+        description: sqlite
+        type: str
+        default: "env(TEST_SQLITE_URI)"
+    description: "points to sqlite database"
+    driver: sql_cat
+    direct_access: forbid
+    metadata: {}
