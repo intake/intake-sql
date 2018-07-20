@@ -1,0 +1,40 @@
+language: generic
+os:
+- linux
+env:
+  matrix:
+  - CONDA_PY=35
+  global:
+    secure: ujj1B51Q6iG0f65hMj1bLUNgxHN0rh3dBKkQb3dELJ+OzU8r6YBXjrZp6PS0OM1PGbR5tcLwfmZG8u9QR1NTDAfYlVKXcd86SWqZl3XTQT7IBn7Z0aqV4ILJfpxacSm7Uu7lu9IKAySrDhhi+k4HbUkYk+xEL72e0F2QS07QldmPU3poCxJfpGiavGumiK6JzQ/Pmln+y6SYCtbf/6E4Ub/9jmBJ6XwyXAXS1zaUCbCnaMnLox3WIDaOInSmAa+yUh6E7uWAMOYF3w89ZGa5Q69TXLVZitUDRut1Faouu8RZbAsCdRHtR1CtqciLZiUf0kaWibDXpKoCQcnQIliDGbZIEBa191xOB8joTtb8F2Hz4QhzQ8tBZDa9hxOA/XlGFmBvNh27eMHO2PfJu08s3S/FZGaMjHuGsECvOmVor6lcHPqSE7gmRGUxiH3VQ++agtGw4I8qD83fsKRvnCR+YopViEgtjMAaXHWSNa4AMB4ITFDGx7omnGSpcuVAQ0AmGM8qk8GqhDYzAzMmOmzPYGxFCcvbciFVcwwnsbQ4iMI9XFhCP2Sd1XVzKEGzOMhKDb0JI+3jAb32mlMpcyGhmi+k3smLzgtZTf2vzH0hq5saRrc4z8IzSsxQTPeNkT0s9O7lo8VujI97dBXOC5RdSRohXR8As6AVkSc9bpJYR4I=
+install:
+- |
+  echo "Installing a fresh version of Miniconda."
+  MINICONDA_URL="https://repo.continuum.io/miniconda"
+  MINICONDA_FILE="Miniconda3-latest-$(case $TRAVIS_OS_NAME in (linux) echo Linux;; (osx) echo MacOSX;;esac)-x86_64.sh"
+  curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
+  bash $MINICONDA_FILE -b
+- |
+  echo "Configuring conda."
+  source $HOME/miniconda3/bin/activate root
+  conda install -y conda-build anaconda-client
+script:
+- |
+  flake8 .
+  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      conda build -c intake -c defaults -c conda-forge ./conda
+  else
+      # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
+      conda build -c intake -c defaults -c conda-forge --no-test ./conda
+  fi
+- |
+  if [ -n "$TRAVIS_TAG" ]; then
+      # If tagged git version, upload package to main channel
+      anaconda -t ${ANACONDA_TOKEN} upload -u intake --force `conda build --output ./conda`
+  else
+      # Otherwise upload package to dev channel
+      anaconda -t ${ANACONDA_TOKEN} upload -u intake --label dev --force `conda build --output ./conda`
+  fi
+notifications:
+  email: false
+  on_success: change
+  on_failure: always
