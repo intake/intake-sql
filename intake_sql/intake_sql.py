@@ -59,6 +59,9 @@ class SQLSource(base.DataSource):
             self._load_metadata()
         return self._dataframe
 
+    def read(self):
+        return self._get_partition(None)
+
     def _close(self):
         self._dataframe = None
 

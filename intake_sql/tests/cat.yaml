@@ -9,4 +9,5 @@ sources:
         default: "env(TEST_SQLITE_URI)"
     description: "points to sqlite database"
     driver: sql_cat
+    direct_access: forbid
     metadata: {}

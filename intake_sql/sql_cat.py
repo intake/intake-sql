@@ -10,14 +10,13 @@ class SQLCatalog(Catalog):
     """
     name = 'sql_cat'
     version = __version__
-    container = 'catalog'
-    partition_access = None
 
     def __init__(self, uri, views=False, **kwargs):
         self.uri = uri
         self.views = views
         self.container = 'catalog'
         super(SQLCatalog, self).__init__(**kwargs)
+        self.name = "SQLCatalog"
 
     def _load(self):
         import sqlalchemy
@@ -34,7 +33,7 @@ class SQLCatalog(Catalog):
                             'sql_kwargs': self.kwargs}
                     e = LocalCatalogEntry(name, description, 'sql_auto', True,
                                           args, {},
-                                          dict(table.columns),
+                                          {},
                                           "", getenv=False,
                                           getshell=False)
                     e._plugin = SQLSourceAutoPartition

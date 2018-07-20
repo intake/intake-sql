@@ -1,6 +1,13 @@
-from intake_sql import SQLManualPartition, SQLAutoPartitionPlugin, SQLPlugin
+import intake
+from intake_sql import (SQLSourceAutoPartition, SQLSourceManualPartition,
+                        SQLSource)
 from intake_sql.tests.utils import temp_db, df
 import pandas as pd
+
+# pytest imports this package last, so plugin is not auto-added
+intake.registry['sql'] = SQLSource
+intake.registry['sql_auto'] = SQLSourceAutoPartition
+intake.registry['sql_manual'] = SQLSourceManualPartition
 
 
 def test_fixture(temp_db):
@@ -11,15 +18,15 @@ def test_fixture(temp_db):
 
 def test_simple(temp_db):
     table, uri = temp_db
-    p = SQLPlugin()
-    d2 = p.open(uri, table, index_col='p').read()
+    d2 = SQLSource(uri, table,
+                   sql_kwargs=dict(index_col='p')).read()
     assert df.equals(d2)
 
 
 def test_auto(temp_db):
     table, uri = temp_db
-    p = SQLAutoPartitionPlugin()
-    s = p.open(uri, table, index='p', npartitions=2)
+    s = SQLSourceAutoPartition(uri, table, index='p',
+                               sql_kwargs=dict(npartitions=2))
     assert s.discover()['npartitions'] == 2
     assert s.to_dask().npartitions == 2
     d2 = s.read()
@@ -28,10 +35,9 @@ def test_auto(temp_db):
 
 def test_manual(temp_db):
     table, uri = temp_db
-    p = SQLManualPartition()
-    s = p.open(uri, "SELECT * FROM " + table,
+    s = SQLSourceManualPartition(uri, "SELECT * FROM " + table,
                where_values=['WHERE p < 20', 'WHERE p >= 20'],
-               index_col='p')
+               sql_kwargs=dict(index_col='p'))
     assert s.discover()['npartitions'] == 2
     assert s.to_dask().npartitions == 2
     d2 = s.read()
