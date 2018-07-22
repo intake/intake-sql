@@ -14,9 +14,7 @@ class SQLCatalog(Catalog):
     def __init__(self, uri, views=False, **kwargs):
         self.uri = uri
         self.views = views
-        self.container = 'catalog'
         super(SQLCatalog, self).__init__(**kwargs)
-        self.name = "SQLCatalog"
 
     def _load(self):
         import sqlalchemy

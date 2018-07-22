@@ -35,8 +35,7 @@ class SQLSource(base.DataSource):
         self._sql_kwargs = sql_kwargs
         self._dataframe = None
 
-        super(SQLSource, self).__init__(container='dataframe',
-                                        metadata=metadata)
+        super(SQLSource, self).__init__(metadata=metadata)
 
     def _load(self):
         import pandas as pd
@@ -109,8 +108,7 @@ class SQLSourceAutoPartition(base.DataSource):
         self._index = index
         self._dataframe = None
 
-        super(SQLSourceAutoPartition, self).__init__(container='dataframe',
-                                                     metadata=metadata)
+        super(SQLSourceAutoPartition, self).__init__(metadata=metadata)
 
     def _load(self):
         import dask.dataframe as dd
@@ -200,8 +198,7 @@ class SQLSourceManualPartition(base.DataSource):
         self._dataframe = None
         self._meta = self._sql_kwargs.pop('meta', None)
 
-        super(SQLSourceManualPartition, self).__init__(container='dataframe',
-                                                       metadata=metadata)
+        super(SQLSourceManualPartition, self).__init__(metadata=metadata)
 
     def _load(self):
         self._dataframe = read_sql_query(self._uri, self._sql_expr,
