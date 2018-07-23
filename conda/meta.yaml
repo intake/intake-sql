@@ -16,7 +16,7 @@ requirements:
     - jinja2
   run:
     - python
-    - intake
+    - intake>=0.2
     - postgresadapter
 
 test:

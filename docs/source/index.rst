@@ -6,6 +6,8 @@
 Welcome to Intake-Postgres's documentation!
 ===========================================
 
+Read data from PostgreSQL into Pandas dataframes using Intake.
+
 .. toctree::
     :maxdepth: 1
     :caption: Contents:

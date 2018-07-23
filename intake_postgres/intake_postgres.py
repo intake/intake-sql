@@ -1,6 +1,10 @@
+from __future__ import absolute_import
 from intake.source import base
 import pandas as pd
 from postgresadapter import PostgresAdapter
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
 
 
 class PostgresSource(base.DataSource):
@@ -16,21 +20,17 @@ class PostgresSource(base.DataSource):
         Further args passed to postgresadapter.PostgresAdapter, see
         https://github.com/ContinuumIO/PostgresAdapter/blob/master/postgresadapter/core/PostgresAdapter.pyx#L281
     """
-    def __init__(self, uri, sql_expr, pg_kwargs, metadata=None):
-        self._init_args = {
-            'uri': uri,
-            'sql_expr': sql_expr,
-            'pg_kwargs': pg_kwargs,
-            'metadata': metadata,
-        }
+    name = 'postgres'
+    container = 'dataframe'
+    version = __version__
+    partition_access = False
 
+    def __init__(self, uri, sql_expr, pg_kwargs={}, metadata=None):
         self._uri = uri
         self._sql_expr = sql_expr
         self._pg_kwargs = pg_kwargs
         self._dataframe = None
-
-        super(PostgresSource, self).__init__(container='dataframe',
-                                             metadata=metadata)
+        super(PostgresSource, self).__init__(metadata=metadata)
 
     def _get_schema(self):
         if self._dataframe is None:
@@ -48,6 +48,8 @@ class PostgresSource(base.DataSource):
         else:
             dtype = self._dataframe[:0]
             shape = self._dataframe.shape
+        dtype = {k: str(v) for k, v
+                 in dtype.dtypes.to_dict().items()}
         return base.Schema(datashape=None,
                            dtype=dtype,
                            shape=shape,
