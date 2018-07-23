@@ -25,7 +25,6 @@ install:
 - |
   echo "Installing dependencies."
   conda install -y conda-build anaconda-client flake8
-  flake8 .  # Fail fast on syntax errors
   # python.app conflicts with postgresadapter's installation
   # conda remove -y python.app
 script:

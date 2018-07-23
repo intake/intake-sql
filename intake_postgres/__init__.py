@@ -1,5 +1,5 @@
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
-
+from __future__ import absolute_import
 from .intake_postgres import PostgresSource
+from .intake_postgres import __version__
+
+__all__ = ['PostgresSource', '__version__']

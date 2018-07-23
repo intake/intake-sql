@@ -1,7 +1,10 @@
+from __future__ import absolute_import
 from intake.source import base
 import pandas as pd
 from postgresadapter import PostgresAdapter
-from . import __version__
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
 
 
 class PostgresSource(base.DataSource):

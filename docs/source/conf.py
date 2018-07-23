@@ -14,6 +14,7 @@
 #
 import os
 import sys
+import intake_postgres
 sys.path.insert(0, os.path.abspath('../..'))
 
 
@@ -24,7 +25,6 @@ copyright = '2018, Anaconda, Inc.'
 author = 'Anaconda, Inc.'
 
 # The short X.Y version
-import intake_postgres
 version = intake_postgres.__version__
 # The full version, including alpha/beta/rc tags
 release = intake_postgres.__version__

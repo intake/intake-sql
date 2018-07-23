@@ -4,7 +4,6 @@ import pytest
 import pandas as pd
 from shapely import wkt
 
-import intake_postgres as postgres
 from intake_postgres import PostgresSource
 from intake import open_catalog
 from .util import verify_datasource_interface
