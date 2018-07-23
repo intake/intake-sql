@@ -5,8 +5,9 @@ import pandas as pd
 from shapely import wkt
 
 import intake_postgres as postgres
-from intake.catalog import Catalog
-from .util import verify_plugin_interface, verify_datasource_interface
+from intake_postgres import PostgresSource
+from intake import open_catalog
+from .util import verify_datasource_interface
 
 
 TEST_DATA_DIR = 'tests'
@@ -59,17 +60,9 @@ def engine():
         stop_postgres()
 
 
-def test_postgres_plugin():
-    p = postgres.Plugin()
-    assert isinstance(p.version, str)
-    assert p.container == 'dataframe'
-    verify_plugin_interface(p)
-
-
 @pytest.mark.parametrize('table_name,_', TEST_DATA)
 def test_open(engine, table_name, _):
-    p = postgres.Plugin()
-    d = p.open(str(engine.url), 'select * from '+table_name)
+    d = PostgresSource(str(engine.url), 'select * from '+table_name)
     assert d.container == 'dataframe'
     assert d.description is None
     verify_datasource_interface(d)
@@ -78,10 +71,10 @@ def test_open(engine, table_name, _):
 @pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
 def test_discover(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
+    source = PostgresSource(str(engine.url), 'select * from '+table_name)
     info = source.discover()
-    assert info['dtype'].equals(expected_df[:0])
+    dt = {k: str(v) for k, v in expected_df.dtypes.to_dict().items()}
+    assert info['dtype'] == dt
     assert info['shape'] == (None, 3)
     assert info['npartitions'] == 1
 
@@ -89,8 +82,7 @@ def test_discover(engine, table_name, csv_fpath):
 @pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
 def test_read(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
+    source = PostgresSource(str(engine.url), 'select * from '+table_name)
     df = source.read()
     assert expected_df.equals(df)
 
@@ -101,10 +93,10 @@ def test_discover_after_read(engine, table_name, csv_fpath):
     information.
     """
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
+    source = PostgresSource(str(engine.url), 'select * from '+table_name)
     info = source.discover()
-    assert info['dtype'].equals(expected_df[:0])
+    dt = {k: str(v) for k, v in expected_df.dtypes.to_dict().items()}
+    assert info['dtype'] == dt
     assert info['shape'] == (None, 3)
     assert info['npartitions'] == 1
 
@@ -112,57 +104,9 @@ def test_discover_after_read(engine, table_name, csv_fpath):
     assert expected_df.equals(df)
 
     info = source.discover()
-    assert info['dtype'].equals(expected_df[:0])
+    assert info['dtype'] == dt
     assert info['shape'] == (4, 3)
     assert info['npartitions'] == 1
-
-    assert expected_df.equals(df)
-
-
-@pytest.mark.skip('Not implemented yet')
-@pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
-def test_read_chunked(engine, table_name, csv_fpath):
-    expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
-
-    parts = list(source.read_chunked())
-    df = pd.concat(parts)
-
-    assert expected_df.equals(df)
-
-
-@pytest.mark.skip('Partition support not planned')
-@pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
-def test_read_partition(engine, table_name, csv_fpath):
-    expected_df1 = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-    expected_df2 = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
-
-    source.discover()
-    assert source.npartitions == 2
-
-    # Read partitions is opposite order
-    df2 = source.read_partition(1)
-    df1 = source.read_partition(0)
-
-    assert expected_df1.equals(df1)
-    assert expected_df2.equals(df2)
-
-
-@pytest.mark.skip('Not implemented yet')
-@pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
-def test_to_dask(engine, table_name, csv_fpath):
-    expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
-
-    dd = source.to_dask()
-    df = dd.compute()
 
     assert expected_df.equals(df)
 
@@ -170,9 +114,7 @@ def test_to_dask(engine, table_name, csv_fpath):
 @pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
 def test_close(engine, table_name, csv_fpath):
     expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
+    source = PostgresSource(str(engine.url), 'select * from '+table_name)
 
     source.close()
     # Can reopen after close
@@ -183,10 +125,7 @@ def test_close(engine, table_name, csv_fpath):
 
 @pytest.mark.parametrize('table_name,csv_fpath', TEST_DATA)
 def test_pickle(engine, table_name, csv_fpath):
-    expected_df = pd.read_csv(os.path.join(TEST_DATA_DIR, csv_fpath))
-
-    p = postgres.Plugin()
-    source = p.open(str(engine.url), 'select * from '+table_name)
+    source = PostgresSource(str(engine.url), 'select * from '+table_name)
 
     pickled_source = pickle.dumps(source)
     source_clone = pickle.loads(pickled_source)
@@ -201,7 +140,7 @@ def test_pickle(engine, table_name, csv_fpath):
 def test_catalog(engine, table_name, _1):
     catalog_fpath = os.path.join(TEST_DATA_DIR, 'catalog1.yml')
 
-    catalog = Catalog(catalog_fpath)
+    catalog = open_catalog(catalog_fpath)
     ds_name = table_name.rsplit('_idx', 1)[0]
     src = catalog[ds_name]
     pgsrc = src.get()
@@ -224,7 +163,7 @@ def test_catalog(engine, table_name, _1):
 def test_catalog_join(engine):
     catalog_fpath = os.path.join(TEST_DATA_DIR, 'catalog1.yml')
 
-    catalog = Catalog(catalog_fpath)
+    catalog = open_catalog(catalog_fpath)
     ds_name = 'sample2'
     src = catalog[ds_name]
     pgsrc = src.get()
@@ -249,7 +188,7 @@ def test_postgis_data(engine, table_name, _1):
     from sqlalchemy import MetaData
     catalog_fpath = os.path.join(TEST_DATA_DIR, 'catalog1.yml')
 
-    catalog = Catalog(catalog_fpath)
+    catalog = open_catalog(catalog_fpath)
     ds_name = table_name
     src = catalog[ds_name]
     pgsrc = src.get()
@@ -280,7 +219,7 @@ def test_postgis_data(engine, table_name, _1):
 def test_jinja2(engine, ds_name):
     catalog_fpath = os.path.join(TEST_DATA_DIR, 'catalog1.yml')
 
-    catalog = Catalog(catalog_fpath)
+    catalog = open_catalog(catalog_fpath)
     src = catalog[ds_name]
     pgsrc = src.get()
     pgsrc._uri = str(engine.url)
