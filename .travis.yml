@@ -3,7 +3,7 @@ os:
 - linux
 env:
   matrix:
-  - CONDA_PY=35
+  - CONDA_PY=36
   global:
     secure: "RSe099llFKbcwsokf6PbnAeMeCHkzCZmg1Cm+dGx+rJRj4SrxOQJjlkduTGYIi91NqoK2tmNqrIDSMBdTpP9UFn4lXYwEdstfj/p/jzeltSTjD9itK5gRX2YwCVMXhDw7w09B4UxsBrVeVAtig20oMDGpcsMe8mQU3UUQJ4/jELdQG85i0n3PuIXBduVGjlCvRObCycBZhbFOgFr+Nn9IZ2V5RufEj+Pt2gFBc8PSQjdcLCEEzuK6+mBoRH8l3GKQaG5/UONavem9Dy+PI2PxH0r8CTThqe0qPHfzXjDrwUv2CZ+8g/e8lJxgTnRqLWvsIQ38YUAZ6UHBm3RchUf5p5N0AO+fk37hEH2IuUzoJwaR3Fv3TIu97KcHR/k81fmkvYdVP5c5ekjNipBfwWqooDBSUe3nKb+RB1poX3blE6O/OCL7yjSUMchg4yhHwHM9uxFssbge/KiMEfNPM1/9eytBIj5g1B69DQdv566p3Z2CM3Fv1d0GlVBUWfuRkQX31XB/lEmcZGe8QEZFtVQzOEUcL3D7rwmQ4qYuxIXvlJJc9rQLstoJ3i5ESCDHRO4OSU29NrOO3sKIyLNxRl4XCEFVoFk1JPpFMlAE+31YiGqGIiKnjUMPFXQ2iTLNIlh25FDCRmOqRw/NV+cKcnBJtgiBvqPt8SGnie34gu+Zgs="
 
@@ -20,13 +20,7 @@ install:
   conda install -y conda-build anaconda-client
 script:
 - |
-  flake8 .
-  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c intake -c defaults -c conda-forge ./conda
-  else
-      # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c intake -c defaults -c conda-forge --no-test ./conda
-  fi
+  conda build -c intake -c defaults -c conda-forge ./conda
 - |
   if [ -n "$TRAVIS_TAG" ]; then
       # If tagged git version, upload package to main channel

@@ -1,5 +1,5 @@
 from intake_sql.sql_cat import SQLCatalog
-from intake_sql.tests.utils import temp_db, df
+from .utils import temp_db, df
 import intake
 import os
 here = os.path.abspath(os.path.dirname(__file__))
