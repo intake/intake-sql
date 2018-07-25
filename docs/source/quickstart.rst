@@ -13,3 +13,5 @@ To use this plugin for `intake`_, install with the following command::
 
 .. _intake: https://github.com/ContinuumIO/intake
 
+In addition, you will also need other packages, depending on the database you wish to talk
+to. For example, if your database if Hive, you will also need to install `pyhive`.
