@@ -30,9 +30,7 @@ class SQLCatalog(Catalog):
                     args = {'uri': self.uri, 'table': name, 'index': c.name,
                             'sql_kwargs': self.kwargs}
                     e = LocalCatalogEntry(name, description, 'sql_auto', True,
-                                          args, {},
-                                          {},
-                                          "", getenv=False,
+                                          args, {}, {}, {}, "", getenv=False,
                                           getshell=False)
                     e._plugin = SQLSourceAutoPartition
                     self._entries[name] = e
