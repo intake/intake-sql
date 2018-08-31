@@ -2,14 +2,10 @@ API Reference
 =============
 
 .. autosummary::
-   intake_sql.SQLManualPartition
    intake_sql.SQLSource
    intake_sql.SQLSourceAutoPartition
    intake_sql.SQLSourceManualPartition
    intake_sql.SQLCatalog
-
-.. autoclass:: intake_sql.SQLManualPartition
-   :members:
 
 .. autoclass:: intake_sql.SQLSource
    :members:

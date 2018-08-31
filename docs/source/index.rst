@@ -1,5 +1,5 @@
 Welcome to intake_sql's documentation!
-==========================================
+======================================
 
 Access any SQL data service which `sqlalchemy` can talk to from Intake.
 
