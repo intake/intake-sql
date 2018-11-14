@@ -32,6 +32,6 @@ class SQLCatalog(Catalog):
                     e = LocalCatalogEntry(name, description, 'sql_auto', True,
                                           args, {}, {}, {}, "", getenv=False,
                                           getshell=False)
-                    e._plugin = SQLSourceAutoPartition
+                    e._plugin = [SQLSourceAutoPartition]
                     self._entries[name] = e
                     break
