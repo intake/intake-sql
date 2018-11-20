@@ -7,6 +7,10 @@ from intake.catalog.local import LocalCatalogEntry
 class SQLCatalog(Catalog):
     """
     Makes data sources out of known tables in the given SQL service
+
+    This uses SQLAlchemy to infer the tables and views on the target server.
+    Of these, those which have at least one primary key column will become
+    ``SQLSourceAutoPartition`` entries in this catalog.
     """
     name = 'sql_cat'
     version = __version__
