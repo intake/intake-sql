@@ -4,3 +4,6 @@ recursive-include . *.yml
 recursive-include . *.ini
 include versioneer.py
 include intake_odbc/_version.py
+include LICENSE
+include README.rst
+include requirements.txt
