@@ -32,7 +32,7 @@ class SQLCatalog(Catalog):
                 if c.primary_key:
                     description = 'SQL table %s from %s' % (name, self.uri)
                     args = {'uri': self.uri, 'table': name, 'index': c.name,
-                            'sql_kwargs': self.kwargs}
+                            'sql_kwargs': {}}
                     e = LocalCatalogEntry(name, description, 'sql_auto', True,
                                           args, {}, {}, {}, "", getenv=False,
                                           getshell=False)
