@@ -332,23 +332,18 @@ def make_ibis_client(uri):
     uri: str
         connection string (sql sqlalchemy documentation)
     """
-    try:
-        import sqlalchemy
-        url = sqlalchemy.engine.url.make_url(uri)
-        dialect = url.get_dialect()
-        name = dialect.name
-        if name == "postgresql":
-            import ibis
-            return ibis.postgres.connect(url=uri)
-        elif name == "mysql":
-            import ibis
-            return ibis.mysql.connect(url=uri)
-        elif name == "sqlite":
-            import ibis
-            return ibis.sqlite.connect(path=url.database)
-        else:
-            raise ValueError(f"Unable to create an ibis connection for {uri}")
-    except Exception as e:
-        raise e
-
+    import sqlalchemy
+    url = sqlalchemy.engine.url.make_url(uri)
+    dialect = url.get_dialect()
+    name = dialect.name
+    if name == "postgresql":
+        import ibis
+        return ibis.postgres.connect(url=uri)
+    elif name == "mysql":
+        import ibis
+        return ibis.mysql.connect(url=uri)
+    elif name == "sqlite":
+        import ibis
+        return ibis.sqlite.connect(path=url.database)
+    else:
         raise ValueError(f"Unable to create an ibis connection for {uri}")
