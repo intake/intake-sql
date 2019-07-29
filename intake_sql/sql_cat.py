@@ -15,7 +15,8 @@ class SQLCatalog(Catalog):
     name = 'sql_cat'
     version = __version__
 
-    def __init__(self, uri, views=False, **kwargs):
+    def __init__(self, uri, views=False, sql_kwargs=None, **kwargs):
+        self.sql_kwargs = sql_kwargs or {}
         self.uri = uri
         self.views = views
         super(SQLCatalog, self).__init__(**kwargs)
@@ -32,7 +33,7 @@ class SQLCatalog(Catalog):
                 if c.primary_key:
                     description = 'SQL table %s from %s' % (name, self.uri)
                     args = {'uri': self.uri, 'table': name, 'index': c.name,
-                            'sql_kwargs': {}}
+                            'sql_kwargs': self.sql_kwargs}
                     e = LocalCatalogEntry(name, description, 'sql_auto', True,
                                           args, {}, {}, {}, "", getenv=False,
                                           getshell=False)
