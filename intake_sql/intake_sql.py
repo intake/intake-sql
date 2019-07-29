@@ -69,6 +69,8 @@ class SQLSource(base.DataSource):
         """
         client = make_ibis_client(self._uri)
         if self._sql_expr not in client.list_tables():
+            # SQLAlchemy-based ibis clients don't currently have
+            # client.sql() implemented.
             raise ValueError("Only full tables can be used in to_ibis")
         else:
             return client.table(self._sql_expr)
@@ -153,6 +155,8 @@ class SQLSourceAutoPartition(base.DataSource):
         """
         client = make_ibis_client(self._uri)
         if self._sql_expr not in client.list_tables():
+            # SQLAlchemy-based ibis clients don't currently have
+            # client.sql() implemented.
             raise ValueError("Only full tables can be used in to_ibis")
         else:
             return client.table(self._sql_expr)
@@ -248,18 +252,6 @@ class SQLSourceManualPartition(base.DataSource):
     def to_dask(self):
         self._get_schema()
         return self._dataframe
-
-    def to_ibis(self):
-        """
-        Create an ibis expression for the data source.
-        The sql_expr for the source must be a table, not a table expression.
-        The ibis expression is not partitioned.
-        """
-        client = make_ibis_client(self._uri)
-        if self._sql_expr not in client.list_tables():
-            raise ValueError("Only full tables can be used in to_ibis")
-        else:
-            return client.table(self._sql_expr)
 
     def read(self):
         self._get_schema()

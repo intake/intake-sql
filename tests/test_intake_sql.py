@@ -57,10 +57,3 @@ def test_to_ibis(temp_db):
     expr = s.to_ibis()
     d2 = expr.execute().set_index('p')
     assert df.equals(d2)
-    # Manual-partition (to_ibis ignores partitioning)
-    s = SQLSourceManualPartition(uri, table,
-               where_values=['WHERE p < 20', 'WHERE p >= 20'],
-               sql_kwargs=dict(index_col='p'))
-    expr = s.to_ibis()
-    d2 = expr.execute().set_index('p')
-    assert df.equals(d2)
