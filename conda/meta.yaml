@@ -24,9 +24,10 @@ test:
   source_files:
     - tests
   requires:
+    - coverage
+    - ibis-framework
     - pytest
     - pytest-cov
-    - coverage
   commands:
     - py.test --verbose --cov=intake_sql tests
 

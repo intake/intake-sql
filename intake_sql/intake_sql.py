@@ -61,6 +61,20 @@ class SQLSource(base.DataSource):
     def read(self):
         return self._get_partition(None)
 
+    def to_ibis(self):
+        """
+        Create an ibis expression for the data source.
+        The sql_expr for the source must be a table, not a table expression.
+        The ibis expression is not partitioned.
+        """
+        client = make_ibis_client(self._uri)
+        if self._sql_expr not in client.list_tables():
+            # SQLAlchemy-based ibis clients don't currently have
+            # client.sql() implemented.
+            raise ValueError("Only full tables can be used in to_ibis")
+        else:
+            return client.table(self._sql_expr)
+
     def _close(self):
         self._dataframe = None
 
@@ -132,6 +146,21 @@ class SQLSourceAutoPartition(base.DataSource):
     def to_dask(self):
         self._get_schema()
         return self._dataframe
+
+    def to_ibis(self):
+        """
+        Create an ibis expression for the data source.
+        The sql_expr for the source must be a table, not a table expression.
+        The ibis expression is not partitioned.
+        """
+        client = make_ibis_client(self._uri)
+        if self._sql_expr not in client.list_tables():
+            # SQLAlchemy-based ibis clients don't currently have
+            # client.sql() implemented.
+            raise ValueError("Only full tables can be used in to_ibis")
+        else:
+            return client.table(self._sql_expr)
+
 
     def read(self):
         self._get_schema()
@@ -279,3 +308,34 @@ def read_sql_query(uri, sql, where, where_tmp=None, meta=None, kwargs=None):
     dload = dask.delayed(load_part)
     parts = [dload(sql, uri, w, kwargs) for w in where]
     return dd.from_delayed(parts, meta=meta)
+
+
+def make_ibis_client(uri):
+    """
+    Create an ibis client from a SQLAlchemy connection string.
+
+    Currently targets existing ibis backends that use SQLAlchemy, namely
+        MySQL
+        PostgreSQL
+        SQLite
+
+    Parameters
+    ----------
+    uri: str
+        connection string (sql sqlalchemy documentation)
+    """
+    import sqlalchemy
+    url = sqlalchemy.engine.url.make_url(uri)
+    dialect = url.get_dialect()
+    name = dialect.name
+    if name == "postgresql":
+        import ibis
+        return ibis.postgres.connect(url=uri)
+    elif name == "mysql":
+        import ibis
+        return ibis.mysql.connect(url=uri)
+    elif name == "sqlite":
+        import ibis
+        return ibis.sqlite.connect(path=url.database)
+    else:
+        raise ValueError(f"Unable to create an ibis connection for {uri}")

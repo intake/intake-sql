@@ -42,3 +42,18 @@ def test_manual(temp_db):
     assert s.to_dask().npartitions == 2
     d2 = s.read()
     assert df.equals(d2)
+
+
+def test_to_ibis(temp_db):
+    table, uri = temp_db
+    # Simple source
+    s = SQLSource(uri, table)
+    expr = s.to_ibis()
+    d2 = expr.execute().set_index('p')
+    assert df.equals(d2)
+    # Auto-partition (to_ibis ignores partitioning)
+    s = SQLSourceAutoPartition(uri, table, index='p',
+                               sql_kwargs=dict(npartitions=2))
+    expr = s.to_ibis()
+    d2 = expr.execute().set_index('p')
+    assert df.equals(d2)
