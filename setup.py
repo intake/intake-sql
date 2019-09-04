@@ -17,6 +17,14 @@ setup(
     py_modules=['intake_sql'],
     packages=['intake_sql'],
     package_data={'': ['*.csv', '*.yml', '*.html']},
+    entry_points={
+        'intake.drivers': [
+            'sql = intake_sql.intake_sql:SQLSource',
+            'sql_cat = intake_sql.sql_cat:SQLCatalog',
+            'sql_auto = intake_sql.intake_sql:SQLSourceAutoPartition',
+            'sql_manual = intake_sql.intake_sql:SQLSourceManualPartition',
+        ]
+    },
     include_package_data=True,
     install_requires=requires,
     long_description=open('README.rst').read(),
