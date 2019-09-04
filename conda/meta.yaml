@@ -26,6 +26,7 @@ test:
   requires:
     - coverage
     - ibis-framework
+    - sqlalchemy<1.3.7
     - pytest
     - pytest-cov
   commands:
