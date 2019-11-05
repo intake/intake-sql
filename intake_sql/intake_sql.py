@@ -39,8 +39,8 @@ class SQLSource(base.DataSource):
 
     def _load(self):
         import pandas as pd
-        self._dataframe = pd.read_sql(self._sql_expr, self._uri,
-                                      **self._sql_kwargs)
+        loader = pd.read_sql_table if self._sql_kwargs.get("schema") else pd.read_sql
+        self._dataframe = loader(self._sql_expr, self._uri, **self._sql_kwargs)
 
     def _get_schema(self):
         if self._dataframe is None:
@@ -156,7 +156,7 @@ class SQLSourceAutoPartition(base.DataSource):
         The sql_expr for the source must be a table, not a table expression.
         The ibis expression is not partitioned.
         """
-        client = make_ibis_client(self._uri)
+        client, supports_schemas = make_ibis_client(self._uri)
         schema = self._sql_kwargs.get("schema")
         schema_kwargs = { "schema": schema } if supports_schemas else {}
 
