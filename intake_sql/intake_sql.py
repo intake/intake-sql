@@ -73,7 +73,7 @@ class SQLSource(base.DataSource):
             # client.sql() implemented.
             raise ValueError("Only full tables can be used in to_ibis")
         else:
-            return client.table(self._sql_expr)
+            return client.table(self._sql_expr, schema=sql_kwargs.get("schema"))
 
     def _close(self):
         self._dataframe = None
@@ -159,7 +159,7 @@ class SQLSourceAutoPartition(base.DataSource):
             # client.sql() implemented.
             raise ValueError("Only full tables can be used in to_ibis")
         else:
-            return client.table(self._sql_expr)
+            return client.table(self._sql_expr, schema=sql_kwargs.get("schema"))
 
 
     def read(self):
