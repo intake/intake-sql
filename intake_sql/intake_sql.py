@@ -39,8 +39,8 @@ class SQLSource(base.DataSource):
 
     def _load(self):
         import pandas as pd
-        self._dataframe = pd.read_sql(self._sql_expr, self._uri,
-                                      **self._sql_kwargs)
+        loader = pd.read_sql_table if self._sql_kwargs.get("schema") else pd.read_sql
+        self._dataframe = loader(self._sql_expr, self._uri, **self._sql_kwargs)
 
     def _get_schema(self):
         if self._dataframe is None:
@@ -67,13 +67,16 @@ class SQLSource(base.DataSource):
         The sql_expr for the source must be a table, not a table expression.
         The ibis expression is not partitioned.
         """
-        client = make_ibis_client(self._uri)
-        if self._sql_expr not in client.list_tables():
+        client, supports_schemas = make_ibis_client(self._uri)
+        schema = self._sql_kwargs.get("schema")
+        schema_kwargs = { "schema": schema } if supports_schemas else {}
+
+        if self._sql_expr not in client.list_tables(**schema_kwargs):
             # SQLAlchemy-based ibis clients don't currently have
             # client.sql() implemented.
             raise ValueError("Only full tables can be used in to_ibis")
         else:
-            return client.table(self._sql_expr)
+            return client.table(self._sql_expr, **schema_kwargs)
 
     def _close(self):
         self._dataframe = None
@@ -153,13 +156,16 @@ class SQLSourceAutoPartition(base.DataSource):
         The sql_expr for the source must be a table, not a table expression.
         The ibis expression is not partitioned.
         """
-        client = make_ibis_client(self._uri)
-        if self._sql_expr not in client.list_tables():
+        client, supports_schemas = make_ibis_client(self._uri)
+        schema = self._sql_kwargs.get("schema")
+        schema_kwargs = { "schema": schema } if supports_schemas else {}
+
+        if self._sql_expr not in client.list_tables(**schema_kwargs):
             # SQLAlchemy-based ibis clients don't currently have
             # client.sql() implemented.
             raise ValueError("Only full tables can be used in to_ibis")
         else:
-            return client.table(self._sql_expr)
+            return client.table(self._sql_expr, **schema_kwargs)
 
 
     def read(self):
@@ -323,6 +329,10 @@ def make_ibis_client(uri):
     ----------
     uri: str
         connection string (sql sqlalchemy documentation)
+
+    Returns
+    -------
+    A tuple of client, supports_schemas
     """
     import sqlalchemy
     url = sqlalchemy.engine.url.make_url(uri)
@@ -330,12 +340,12 @@ def make_ibis_client(uri):
     name = dialect.name
     if name == "postgresql":
         import ibis
-        return ibis.postgres.connect(url=uri)
+        return ibis.postgres.connect(url=uri), True
     elif name == "mysql":
         import ibis
-        return ibis.mysql.connect(url=uri)
+        return ibis.mysql.connect(url=uri), True
     elif name == "sqlite":
         import ibis
-        return ibis.sqlite.connect(path=url.database)
+        return ibis.sqlite.connect(path=url.database), False
     else:
         raise ValueError(f"Unable to create an ibis connection for {uri}")
