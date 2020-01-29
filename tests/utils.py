@@ -12,6 +12,11 @@ df = pd.DataFrame({
     'c': np.random.choice(['a', 'b', 'c', 'd'], size=100)
 })
 df.index.name = 'p'
+df2 = pd.DataFrame({
+    'd': np.random.rand(100),
+    'e': np.random.randint(100),
+    'f': np.random.choice(['a', 'b', 'c', 'd'], size=100)
+})
 
 
 @pytest.fixture(scope='module')
@@ -26,9 +31,15 @@ def temp_db():
         a REAL NOT NULL,
         b BIGINT NOT NULL,
         c TEXT NOT NULL);""")
+    con.execute(
+        """CREATE TABLE temp2 (
+        d REAL NOT NULL,
+        e BIGINT NOT NULL,
+        f TEXT NOT NULL);""")
     df.to_sql('temp', uri, if_exists='append')
+    df2.to_sql('temp_nopk', uri, if_exists='append', index=False)
     try:
-        yield 'temp', uri
+        yield 'temp', 'temp_nopk', uri
     finally:
         if os.path.isfile(f):
             os.remove(f)
