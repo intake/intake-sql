@@ -35,6 +35,8 @@ class SQLCatalog(Catalog):
                 # does not include the schema name, which is handled
                 # by the `sql_kwargs`.
                 if c.primary_key:
+
+                    description = 'SQL table %s from %s' % (name, self.uri)
                     args = {'uri': self.uri, 'table': table.name, 'index': c.name,
                             'sql_kwargs': self.sql_kwargs}
                     e = LocalCatalogEntry(table.name, description, 'sql_auto', True,
