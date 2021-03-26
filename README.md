@@ -9,6 +9,6 @@ SQL Plugin for Intake
 
 To install the intake-sql plugin, execute the following command
 ```
-conda install -c intake intake-sql
+conda install -c conda-forge intake-sql
 ```
 
