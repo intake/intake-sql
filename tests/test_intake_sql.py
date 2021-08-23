@@ -1,8 +1,9 @@
 import intake
+import pandas as pd
+
 from intake_sql import (SQLSourceAutoPartition, SQLSourceManualPartition,
                         SQLSource)
 from .utils import temp_db, df, df2
-import pandas as pd
 
 # pytest imports this package last, so plugin is not auto-added
 intake.registry['sql'] = SQLSource
