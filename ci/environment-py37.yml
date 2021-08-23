@@ -1,0 +1,18 @@
+name: test_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - aiohttp
+  - tornado
+  - msgpack
+  - sqlalchemy
+  - intake
+  - dask=2021.06.0
+  - requests
+  - msgpack-numpy
+  - pytest
+  - fsspec
+  - pip
+  - pytest
