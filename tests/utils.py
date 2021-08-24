@@ -15,7 +15,7 @@ df.index.name = 'p'
 df2 = pd.DataFrame({
     'd': np.random.rand(100),
     'e': np.random.randint(100),
-    'f': np.random.choice(['a', 'b', 'c', 'd'], size=100 dtype="O")
+    'f': np.random.choice(['a', 'b', 'c', 'd'], size=100, dtype="O")
 })
 
 
