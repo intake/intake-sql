@@ -7,14 +7,14 @@ import sqlalchemy as sa
 
 
 df = pd.DataFrame({
-    'a': np.random.rand(100),
-    'b': np.random.randint(100),
+    'a': np.random.rand(100).tolist(),
+    'b': np.random.randint(100).tolist(),
     'c': np.random.choice(['a', 'b', 'c', 'd'], size=100).tolist()
 })
 df.index.name = 'p'
 df2 = pd.DataFrame({
-    'd': np.random.rand(100),
-    'e': np.random.randint(100),
+    'd': np.random.rand(100).tolist(),
+    'e': np.random.randint(100).tolist(),
     'f': np.random.choice(['a', 'b', 'c', 'd'], size=100).tolist()
 })
 
