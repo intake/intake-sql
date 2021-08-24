@@ -31,8 +31,6 @@ def test_yaml_cat(temp_db):
     table, table_nopk, uri = temp_db
     os.environ['TEST_SQLITE_URI'] = uri  # used in catalog default
     cat = intake.open_catalog(os.path.join(here, 'cat.yaml'))
-    import pdb
-    pdb.set_trace()
     assert 'tables' in cat
     cat2 = cat.tables()
     assert isinstance(cat2, SQLCatalog)

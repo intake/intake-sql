@@ -6,11 +6,12 @@ dependencies:
   - python=3.7
   - aiohttp
   - tornado
-  - sqlalchemy
+  - sqlalchemy<1.4
   - intake
   - requests
   - msgpack-numpy
   - pytest
   - fsspec
+  - ibis
   - pip
   - pytest
