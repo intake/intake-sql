@@ -71,5 +71,5 @@ def remote_sql(temp_db):
 def test_with_server(remote_sql):
     cat = intake.open_catalog(remote_sql)
     s = cat.tables.temp()
-    df = s.read()
-    assert df.shape == (100, 4)
+    data = s.read()
+    assert data.equals(df)
