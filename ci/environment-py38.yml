@@ -12,6 +12,6 @@ dependencies:
   - msgpack-numpy
   - pytest
   - fsspec
-  - ibis
+  - ibis-framework
   - pip
   - pytest
