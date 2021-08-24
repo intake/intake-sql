@@ -1,5 +1,6 @@
 import intake
 import pandas as pd
+import pytest
 
 from intake_sql import (SQLSourceAutoPartition, SQLSourceManualPartition,
                         SQLSource)
@@ -46,6 +47,7 @@ def test_manual(temp_db):
 
 
 def test_to_ibis(temp_db):
+    pytest.importorskip("ibis")
     table, table_nopk, uri = temp_db
     # Simple source with primary key
     s = SQLSource(uri, table)
