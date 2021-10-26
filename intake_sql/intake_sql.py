@@ -48,7 +48,7 @@ class SQLSource(base.DataSource):
             # first few records, rather than loading the whole thing
             self._load()
         return base.Schema(datashape=None,
-                           dtype=self._dataframe.dtypes,
+                           dtype={k: str(v) for k,v in self._dataframe.dtypes.items()},
                            shape=self._dataframe.shape,
                            npartitions=1,
                            extra_metadata={})
@@ -136,7 +136,7 @@ class SQLSourceAutoPartition(base.DataSource):
         if self._dataframe is None:
             self._load()
         return base.Schema(datashape=None,
-                           dtype=self._dataframe,
+                           dtype={k: str(v) for k,v in self._dataframe.dtypes.items()},
                            shape=(None, len(self._dataframe.columns)),
                            npartitions=self._dataframe.npartitions,
                            extra_metadata={})
@@ -245,7 +245,7 @@ class SQLSourceManualPartition(base.DataSource):
         if self._dataframe is None:
             self._load()
         return base.Schema(datashape=None,
-                           dtype=self._dataframe,
+                           dtype={k: str(v) for k,v in self._dataframe.dtypes.items()},
                            shape=(None, len(self._dataframe.columns)),
                            npartitions=self._dataframe.npartitions,
                            extra_metadata={})
