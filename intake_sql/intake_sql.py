@@ -308,7 +308,7 @@ def read_sql_query(uri, sql, where, where_tmp=None, meta=None, kwargs=None):
     import dask
     import dask.dataframe as dd
     if where_tmp is not None:
-        where = [where_tmp.format(values) for values in where]
+        where = [where_tmp.format(*values) for values in where]
     if kwargs is None:
         kwargs = {}
     dload = dask.delayed(load_part)

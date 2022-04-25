@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.8
+  - python=3.10
   - aiohttp
   - tornado
   - sqlalchemy
@@ -12,6 +12,5 @@ dependencies:
   - msgpack-numpy
   - pytest
   - fsspec
-  - ibis-framework
   - pip
   - pytest

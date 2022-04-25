@@ -6,7 +6,7 @@ dependencies:
   - python=3.9
   - aiohttp
   - tornado
-  - sqlalchemy<1.4
+  - sqlalchemy
   - intake
   - requests
   - msgpack-numpy
