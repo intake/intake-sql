@@ -13,5 +13,4 @@ dependencies:
   - pytest
   - fsspec
   - pip
-  - ibis-framework
   - pytest
