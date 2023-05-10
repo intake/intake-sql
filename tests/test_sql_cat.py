@@ -13,7 +13,7 @@ from .utils import temp_db, df, df2
 here = os.path.abspath(os.path.dirname(__file__))
 
 # pytest imports this package last, so plugin is not auto-added
-intake.registry['sql_cat'] = SQLCatalog
+intake.register_driver('sql_cat', SQLCatalog, clobber=True)
 
 
 def test_cat(temp_db):
