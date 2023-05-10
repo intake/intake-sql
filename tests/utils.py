@@ -4,6 +4,7 @@ import os
 import pytest
 import tempfile
 import sqlalchemy as sa
+from sqlalchemy import text
 
 
 df = pd.DataFrame({
@@ -26,16 +27,18 @@ def temp_db():
     engine = sa.create_engine(uri)
     con = engine.connect()
     con.execute(
-        """CREATE TABLE temp (
+        text("""CREATE TABLE temp (
         p BIGINT PRIMARY KEY,
         a REAL NOT NULL,
         b BIGINT NOT NULL,
         c TEXT NOT NULL);""")
+    )
     con.execute(
-        """CREATE TABLE temp2 (
+        text("""CREATE TABLE temp2 (
         d REAL NOT NULL,
         e BIGINT NOT NULL,
         f TEXT NOT NULL);""")
+    )
     df.to_sql('temp', uri, if_exists='append')
     df2.to_sql('temp_nopk', uri, if_exists='append', index=False)
     try:

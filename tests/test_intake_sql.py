@@ -7,9 +7,9 @@ from intake_sql import (SQLSourceAutoPartition, SQLSourceManualPartition,
 from .utils import temp_db, df, df2
 
 # pytest imports this package last, so plugin is not auto-added
-intake.registry['sql'] = SQLSource
-intake.registry['sql_auto'] = SQLSourceAutoPartition
-intake.registry['sql_manual'] = SQLSourceManualPartition
+intake.register_driver("sql", SQLSource, clobber=True)
+intake.register_driver('sql_auto', SQLSourceAutoPartition, clobber=True)
+intake.register_driver('sql_manual', SQLSourceManualPartition, clobber=True)
 
 
 def test_fixture(temp_db):

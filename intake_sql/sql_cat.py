@@ -24,8 +24,9 @@ class SQLCatalog(Catalog):
     def _load(self):
         import sqlalchemy
         engine = sqlalchemy.create_engine(self.uri)
-        meta = sqlalchemy.MetaData(bind=engine)
-        meta.reflect(views=self.views, schema=self.sql_kwargs.get("schema"))
+        meta = sqlalchemy.MetaData()
+        meta.reflect(bind=engine, views=self.views,
+                     schema=self.sql_kwargs.get("schema"))
         self._entries = SQLEntries(meta, self.uri, self.sql_kwargs)
 
 
